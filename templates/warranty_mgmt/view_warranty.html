@@ -1,0 +1,40 @@
+{% extends 'base.html'%}
+
+{% block content %}
+<div class="col-md-4 container mb-5">
+    <table class="table table-striped my-5">
+        <tr>
+            <th>First Name</th>
+            <td>{{all_warranties.image}}</td>
+        </tr>
+        <tr>
+            <th>Last Name</th>
+            <td>{{all_warranties.product_name}}</td>
+        </tr>
+        <tr>
+            <th>Email Address</th>
+            <td>{{all_warranties.warranty_number}}</td>
+        </tr>
+        <tr>
+            <th>Date of Birth</th>
+            <td>{{all_warranties.product_purchase_date}}</td>
+        </tr>
+        <tr>
+            <th>Bio</th>
+            <td>{{all_warranties.warranty_expiry_date}}</td>
+        </tr>
+        <tr>
+            <th>Bio</th>
+            <td>{{all_warranties.warranty_provider}}</td>
+        </tr>
+        <tr>
+            <th>Created Date</th>
+            <td>{{all_warranties.created_at.strftime("%d/%m/%Y")}}</td>
+        </tr>
+        <tr>
+            <th>Updated Date</th>
+            <td>{{all_warranties.updated_at.strftime("%d/%m/%Y")}}</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

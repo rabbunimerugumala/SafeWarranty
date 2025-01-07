@@ -1,0 +1,16 @@
+*{
+    padding:0;
+    margin:0;
+    font-family: "Poppins", sans-serif;
+}
+
+.font-caveat
+{
+    font-family: 'Caveat', cursive;
+    font-size: 30px;
+    text-shadow: 3px 3px 3px #ababab;
+}
+
+.font-satisfy{
+    font-family: 'Satisfy', cursive;
+}

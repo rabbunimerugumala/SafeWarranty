@@ -1,0 +1,21 @@
+{% macro render_input_field(field, label, placeholder="", value="", is_image=False, existing_image_url="") %}
+    <div class="mb-3">
+        <label class="mb-1">{{ label }}</label>
+        {% if is_image %}
+            <input type="file" name="{{ field.name }}" class="form-control"  placeholder="{{ placeholder }}">
+            {% if existing_image_url %}
+                <div class="mt-2">
+                    <label>Current Image:</label>
+                    <img src="{{ existing_image_url }}" alt="Current Image" class="img-thumbnail" style="max-width: 200px;">
+                </div>
+            {% endif %}
+        {% else %}
+            {{ field(class='form-control', placeholder=placeholder, value=value) }}
+        {% endif %}
+        {% if field.errors %}
+            {% for error in field.errors %}
+                <div class="form-text text-danger">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endmacro %}

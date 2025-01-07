@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% from "includes/form_input.html" import render_input_field with context %}
+
+{% block content %}
+<div class="col-md-6 container">
+    {% if status == "success" %}
+    <div class="alert alert-success text-center">
+        Warranty successfully registered.
+    </div>
+    {% elif status == "error" %}
+    <div class="alert alert-danger text-center">
+        Something went wrong! Warranty registration failed.
+    </div>
+    {% endif %}
+    <form method="POST" enctype="multipart/form-data" class="my-5" novalidate>
+        <!-- Image Upload Field -->
+        <!--        {{ render_input_field(field=form.image,  label="Product Image", is_image=True, existing_image_url=existing_image_url) }}-->
+        {{ form.csrf_token }}
+        {{ render_input_field(field=form.product_name, label="Product Name *", placeholder="Product Name...") }}
+        {{ render_input_field(field=form.warranty_number, label="Warranty Number *", placeholder="Warranty Number...")
+        }}
+        {{ render_input_field(field=form.product_purchase_date, label="Product Purchase Date *", placeholder="Enter your
+        Product Purchase Date...") }}
+        {{ render_input_field(field=form.warranty_expiry_date, label="Warranty Expiry Date *", placeholder="Enter your
+        Warranty Expiry Date...") }}
+        {{ render_input_field(field=form.warranty_provider, label="Warranty Provider *", placeholder="Enter your
+        Warranty Provider...") }}
+
+        <div class="mb-3">
+            <label for="image">Upload Image</label>
+            <input type="file" id="image" name="image" class="form-control">
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-person-fill-add"></i>
+                <span class="ml-2">Submit</span>
+            </button>
+        </div>
+
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+</div>
+
+{% endblock %}
