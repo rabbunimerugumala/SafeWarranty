@@ -4,13 +4,24 @@
     font-family: "Poppins", sans-serif;
 }
 
-.font-caveat
-{
-    font-family: 'Caveat', cursive;
-    font-size: 30px;
-    text-shadow: 3px 3px 3px #ababab;
-}
+    /* Background styling */
+    body {
+        background: linear-gradient(to bottom right, #f0f8ff, #e6f7ff);
+        font-family: 'Arial', sans-serif;
+    }
+
 
 .font-satisfy{
     font-family: 'Satisfy', cursive;
+}
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+.card-title {
+    font-weight: bold;
+    color: #333;
+}
+.card-text {
+    color: #555;
 }

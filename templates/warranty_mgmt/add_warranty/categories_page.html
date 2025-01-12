@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .warranty-card {
+
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .warranty-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+    .card-header {
+        background-color: #007bff;
+        color: #ffffff;
+        font-weight: bold;
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+    }
+    .card-body i {
+        font-size: 3rem;
+        color: #007bff;
+
+    }
+    .card-body p {
+        font-size: 14px;
+        color: #555;
+    }
+    .center-title {
+        text-align: center;
+        margin-top: 50px;
+        margin-bottom: 50px;
+        color: #2c3e50;
+    }
+    .center-title h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        text-shadow: 5px 3px #ddd;
+    }
+    .center-title p {
+        font-size: 1.2rem;
+        color: #555;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="container">
+    <!-- Centered Title and Quote -->
+    <div class="center-title">
+        <h1>SAFE WARRANTY</h1>
+        <p>"Protect your investments with trust, assurance, and simplicity."</p>
+    </div>
+
+    <!-- Warranty Cards Section -->
+    <div class="row">
+        {% for category in categories %}
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('subcategories', category=category) }}" style="text-decoration: none;">
+                <div class="warranty-card">
+                    <div class="card-header">{{ category }}</div>
+                    <div class="card-body">
+                        {% if category == "Electronics Warranty" %}
+                       <i class="bi bi-laptop"></i>
+                        {% elif category == "Home Appliances Warranty" %}
+                        <i class="bi bi-house-door-fill"></i>
+                        {% elif category == "Automobile Warranty" %}
+                         <i class="bi bi-car-front-fill"></i>
+                        {% elif category == "Furniture Warranty" %}
+                        <i class="bi bi-chair"></i>
+                        {% elif category == "Office Equipment" %}
+                        <i class="bi bi-printer"></i>
+                        {% elif category == "Industrial Warranty" %}
+                        <i class="bi bi-gear-fill"></i>
+                        {% elif category == "Other Warranties" %}
+                        <i class="bi bi-box-seam"></i>
+                        {% endif %}
+                        <p>Manage warranties for {{ category.lower() }} effortlessly.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

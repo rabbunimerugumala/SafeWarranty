@@ -1,42 +1,95 @@
 {% extends 'base.html' %}
 
-{% block heading %}
-Students Details
-{%endblock%}
+
 
 {% block content %}
+    {% include 'components/headings.html' %}
+<style>
+    /* Styling the container for cards */
+    .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+    }
+
+    /* Individual card styling */
+    .data-card {
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .data-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Card image styling */
+    .data-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    /* Card content styling */
+    .card-content {
+        padding: 15px;
+        text-align: center;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .view-details-btn {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 12px;
+        font-size: 14px;
+        color: #fff;
+        background-color: #007bff;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .view-details-btn:hover {
+        background-color: #0056b3;
+    }
+</style>
+
 <div class="container">
-
-    <table class="py-2 mb-5 table table-striped table-hover">
-        <thead class="table-dark">
-        <tr>
-            {% for heading in headings %}
-            <td>{{heading}}</td>
-            {% endfor %}
-        </tr>
-        </thead>
-        {% for warranty in warranties%}
-        <tr>
-            <td>{{warranty.id}}</td>
-            <td>
-                {% if warranty.image %}
-                <img src="{{ url_for('static', filename=warranty.image) }}" alt="Warranty Image"
-                     style="max-width: 200px;">
-                {% else %}
-                No Image
-                {% endif %}
-            </td>
-
-            <td>{{ warranty.product_name }}</td>
-            <td>{{ warranty.warranty_number }}</td>
-            <td>{{ warranty.product_purchase_date }}</td>
-            <td>{{ warranty.warranty_expiry_date }}</td>
-            <td>{{ warranty.warranty_provider }}</td>
+    <div class="card-container">
+        {% for warranty in warranties %}
+        <div class="data-card">
+            <!-- Display image -->
+            {% if warranty.image %}
+            <img src="{{ url_for('static', filename=warranty.image) }}" alt="Warranty Image">
+            {% else %}
+            <div style="text-align: center; font-size: 50px;" class="justify-content-center">
+                <i class="bi bi-image"></i> <!-- Example icon -->
+            </div>
+            <p class="text-center">No Image Available</p>
+            {% endif %}
 
 
-        </tr>
+            <!-- Display product name -->
+            <div class="card-content">
+                <h5 class="card-title">{{ warranty.product_name }}</h5>
+
+                <!-- View Details Button -->
+                <a href="{{ url_for('view_warranties', warranty_id=warranty.id) }}" class="view-details-btn "><i class="bi bi-eye"></i>
+                    View Details
+                </a>
+            </div>
+        </div>
         {% endfor %}
-    </table>
-
+    </div>
 </div>
 {% endblock %}
