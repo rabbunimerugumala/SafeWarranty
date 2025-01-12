@@ -1,13 +1,13 @@
 import traceback
 import os
 from flask import Flask, render_template, request, redirect, flash, url_for, jsonify
-from flask_sqlalchemy import SQLAlchemy
 from pathlib import Path
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from flask_migrate import Migrate
 from sqlalchemy.exc import IntegrityError
 from schemas import RegisterWarrantyCard, EditWarrantyCard
+from models import WarrantyCard, Category, Subcategory, db
 
 # create a flask app
 app = Flask(__name__)
@@ -21,10 +21,14 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + str(db_path)
 # Directory to save uploaded images
 app.config['UPLOAD_FOLDER'] = 'static/uploads'  # Set the upload folder path
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}  # Allowed extensions
-db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from models import WarrantyCard
+# Initialize database with the app
+db.init_app(app)
+
+# Create tables if they don't exist
+with app.app_context():
+    db.create_all()
 
 
 # Allowed file extensions for images
@@ -33,55 +37,50 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-# Main types and subcategories data
-categories = {
-    "Electronics Warranty": ["Smartphones", "Laptops", "Tablets", "Cameras", "Headphones", "Wearables", "Others"],
-    "Home Appliances Warranty": ["Refrigerators", "Washing Machines", "Microwave Ovens", "Air Conditioners",
-                                 "Vacuum Cleaners", "Coffee Machines", "Others"],
-    "Automobile Warranty": ["Cars", "Motorcycles", "Electric Scooters", "Bicycles", "Spare Parts", "Others"],
-    "Furniture Warranty": ["Sofas", "Beds", "Tables and Chairs", "Wardrobes", "Mattresses", "Others"],
-    "Office Equipment": ["Printers", "Computers and Accessories", "Desks and Chairs", "Projectors", "Others"],
-    "Tools & Machinery": ["Power Tools", "Hand Tools", "Garden Equipment", "Workshop Machines", "Others"],
-    "Other Warranties": ["Musical Instruments", "Sports Equipment", "Toys", "Tools", "Miscellaneous", "Others"],
-}
-
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
 
-# @app.route('/add_warranty')
-# def warranty_categories():
-#     # Fetch all categories from the database
-#     categories = Category.query.all()
-#     print(categories)  # Check if categories are fetched correctly
-#     # Pass the categories to the template to render as cards
-#     return render_template('warranty_mgmt/add_warranty/categories_page.html', categories=categories)
-#
-#
-# @app.route('/subcategories/<category_id>', methods=['GET'])
-# def subcategories(category_id):
-#     # Get subcategories dynamically based on selected category
-#     category = Category.query.get(category_id)
-#     if not category:
-#         return jsonify({"error": "Category not found"}), 404
-#
-#     subcategories = Subcategory.query.filter_by(category_id=category_id).all()
-#     subcategory_list = [{"id": sub.id, "name": sub.name} for sub in subcategories]
-#     return jsonify({"subcategories": subcategory_list})
+@app.route('/add_warranty')
+def categories_page():
+    categories = Category.query.all()  # Fetch all categories from the database
+    return render_template('warranty_mgmt/add_warranty/categories_page.html', categories=categories)
 
 
-@app.route('/add_warranty', methods=('GET', 'POST'))
+@app.route('/subcategories/<int:category_id>')
+def subcategories_page(category_id):
+    category = Category.query.get_or_404(category_id)
+    subcategories = Subcategory.query.filter_by(category_id=category.id).all()
+    return render_template('warranty_mgmt/add_warranty/subcategories.html', category=category, subcategories=subcategories)
+
+
+@app.route('/warranty_form', methods=('GET', 'POST'))
 def add_warranty():
     form = RegisterWarrantyCard(request.form)
+    # Get the subcategory_id from the URL
+    subcategory_id = request.args.get('subcategory_id', type=int)
+    form = RegisterWarrantyCard(request.form)
+
+    # Prefill the subcategory dropdown if subcategory_id is passed
+    if subcategory_id:
+        form.subcategory.data = subcategory_id
+
+    # Dynamically populate categories and subcategories
+    form.category.choices = [(cat.id, cat.name) for cat in Category.query.all()]
+    form.subcategory.choices = [(sub.id, sub.name) for sub in Subcategory.query.all()]
     if request.method == 'POST' and form.validate():
         try:
+            # Get form data
+            category_id = int(request.form.get('category', '').strip())
+            subcategory_id = int(request.form.get('subcategory', '').strip())
             product_name = request.form.get('product_name', '').strip()
             warranty_number = request.form.get('warranty_number', '').strip()
             product_purchase_date = datetime.strptime(request.form.get('product_purchase_date').strip(), '%Y-%m-%d')
             warranty_expiry_date = datetime.strptime(request.form.get('warranty_expiry_date').strip(), '%Y-%m-%d')
             warranty_provider = request.form.get('warranty_provider', '').strip()
+
 
             # File upload handling
             image_file = request.files.get('image')
@@ -106,7 +105,9 @@ def add_warranty():
                     warranty_number=warranty_number,
                     product_purchase_date=product_purchase_date,
                     warranty_expiry_date=warranty_expiry_date,
-                    warranty_provider=warranty_provider
+                    warranty_provider=warranty_provider,
+                    category_id=category_id,
+                    subcategory_id=subcategory_id
 
                 )
 
@@ -121,7 +122,9 @@ def add_warranty():
         except Exception as e:
             traceback.print_exc()
             flash(f'An unexpected error occurred: {e}', 'danger')
-
+    # Dynamically populate categories and subcategories
+    form.category.choices = [(cat.id, cat.name) for cat in Category.query.all()]
+    form.subcategory.choices = [(sub.id, sub.name) for sub in Subcategory.query.all()]
     return render_template('warranty_mgmt/add_warranty/warranty_form.html',page_heading="Add Warranty",form=form)
 
 

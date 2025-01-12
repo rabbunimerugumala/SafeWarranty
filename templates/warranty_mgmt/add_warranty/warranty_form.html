@@ -12,32 +12,58 @@
         Something went wrong! Warranty registration failed.
     </div>
     {% endif %}
+
     <form method="POST" enctype="multipart/form-data" class="mb-5" novalidate>
-        <!-- Image Upload Field -->
-        <!--        {{ render_input_field(field=form.image,  label="Product Image", is_image=True, existing_image_url=existing_image_url) }}-->
+        <!-- CSRF Token -->
         {{ form.csrf_token }}
+
+        <!-- Category Selection -->
+        <!-- Dropdowns -->
+        <div class="mb-3">
+            {{ form.category.label }}
+            {{ form.category(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.subcategory.label }}
+            {{ form.subcategory(class="form-control") }}
+        </div>
+
+        <!-- Image Upload Field -->
         <div class="mb-3">
             <label for="image">Upload Image</label>
             <input type="file" id="image" name="image" class="form-control">
         </div>
 
-
+        <!-- Product Details Fields -->
         {{ render_input_field(field=form.product_name, label="Product Name *", placeholder="Product Name...") }}
-        {{ render_input_field(field=form.warranty_number, label="Warranty Number *", placeholder="Warranty Number...")
-        }}
-        {{ render_input_field(field=form.product_purchase_date, label="Product Purchase Date *", placeholder="Enter your
-        Product Purchase Date...") }}
-        {{ render_input_field(field=form.warranty_expiry_date, label="Warranty Expiry Date *", placeholder="Enter your
-        Warranty Expiry Date...") }}
-        {{ render_input_field(field=form.warranty_provider, label="Warranty Provider *", placeholder="Enter your
-        Warranty Provider...") }}
+        {{ render_input_field(field=form.warranty_number, label="Warranty Number *", placeholder="Warranty Number...") }}
+        {{ render_input_field(field=form.product_purchase_date, label="Product Purchase Date *", placeholder="Enter your Product Purchase Date...") }}
+        {{ render_input_field(field=form.warranty_expiry_date, label="Warranty Expiry Date *", placeholder="Enter your Warranty Expiry Date...") }}
+        {{ render_input_field(field=form.warranty_provider, label="Warranty Provider *", placeholder="Enter your Warranty Provider...") }}
 
+        <!-- Submit Button -->
         <div class="mt-3">
-            <button type="submit" class="btn btn-primary ">
+            <button type="submit" class="btn btn-primary">
                 <i class="bi bi-file-plus"></i>
                 <span class="ml-2">Submit</span>
             </button>
         </div>
     </form>
 </div>
+
+<script>
+    // Update subcategories based on selected category
+    document.getElementById('category').addEventListener('change', function() {
+        const categoryId = this.value;
+        fetch(`/subcategories/${categoryId}`)
+            .then(response => response.json())
+            .then(data => {
+                let subcategoryOptions = '<option value="">Select a subcategory</option>';
+                data.subcategories.forEach(function(subcategory) {
+                    subcategoryOptions += `<option value="${subcategory.id}">${subcategory.name}</option>`;
+                });
+                document.getElementById('subcategory').innerHTML = subcategoryOptions;
+            });
+    });
+</script>
 {% endblock %}
