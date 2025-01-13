@@ -102,6 +102,51 @@
         display: flex;
         justify-content: center;
     }
+
+    .image-edit-container {
+    position: relative;
+    width: 750px; /* Adjust the width */
+    height: 350px; /* Adjust the height */
+    margin: 20px auto;
+}
+
+.image-edit-label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    position: relative;
+<!--    border-radius: 50%; /* Optional for circular images */-->
+    overflow: hidden;
+}
+
+.image-edit-label img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+<!--    border-radius: 50%; /* Matches the container */-->
+}
+
+.image-edit-label .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 24px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-edit-label:hover .overlay {
+    opacity: 1;
+}
+
 </style>
 
 <div class="main-container">
@@ -115,64 +160,110 @@
         <div class="card-content">
             <h3 class="text-center mb-4">Edit Warranty</h3>
 
-            <!-- Warranty Image -->
-            {% if warranty.image %}
-            <img src="{{ url_for('static', filename=warranty.image) }}" alt="Warranty Image" class="warranty-image">
-            {% else %}
-            <div style="text-align: center; font-size: 50px;" class="justify-content-center">
-                <i class="bi bi-image"></i>
-            </div>
-            <p class="text-center">No Image Available</p>
-            {% endif %}
+<!--            &lt;!&ndash; Warranty Image &ndash;&gt;-->
+<!--            {% if warranty.image %}-->
+<!--            <img src="{{ url_for('static', filename=warranty.image) }}" alt="Warranty Image" class="warranty-image">-->
+<!--            {% else %}-->
+<!--            <div style="text-align: center; font-size: 50px;" class="justify-content-center">-->
+<!--                <i class="bi bi-image"></i>-->
+<!--            </div>-->
+<!--            <p class="text-center">No Image Available</p>-->
+<!--            {% endif %}-->
+
+
 
             <!-- Edit Warranty Form -->
             <form method="POST" enctype="multipart/form-data">
+                <div class="image-edit-container info-card">
+                        <!-- Display the current image -->
+                        <label for="image-upload" class="image-edit-label">
+                            <img id="current-image"
+                                 src="{{ url_for('static', filename=warranty.image) }}"
+                                 alt="Current Image">
+                            <div class="overlay">
+                                <i class="bi bi-plus-circle"></i>
+                            </div>
+                        </label>
+
+                        <!-- Hidden file input -->
+                        <input type="file" id="image-upload" name="image" accept="image/*"
+                               onchange="previewImage(event)" style="display: none;">
+                    </div>
                 <div class="info-section">
                     <!-- Product Name -->
                     <div class="info-card">
                         <h6>Product Name</h6>
-                        <input type="text" name="product_name" value="{{ form.product_name.data or warranty.product_name }}" class="form-control" required>
+                        <input type="text" name="product_name"
+                               value="{{ form.product_name.data or warranty.product_name }}" class="form-control"
+                               required>
                     </div>
 
                     <!-- Warranty Number -->
                     <div class="info-card">
                         <h6>Warranty Number</h6>
-                        <input type="text" name="warranty_number" value="{{ form.warranty_number.data or warranty.warranty_number }}" class="form-control" required>
+                        <input type="text" name="warranty_number"
+                               value="{{ form.warranty_number.data or warranty.warranty_number }}" class="form-control"
+                               required>
                     </div>
 
                     <!-- Product Purchase Date -->
                     <div class="info-card">
                         <h6>Product Purchase Date</h6>
-                        <input type="date" name="product_purchase_date" value="{{ form.product_purchase_date.data or warranty.product_purchase_date }}" class="form-control" required>
+                        <input type="date" name="product_purchase_date"
+                               value="{{ form.product_purchase_date.data or warranty.product_purchase_date }}"
+                               class="form-control" required>
                     </div>
 
                     <!-- Warranty Expiry Date -->
                     <div class="info-card">
                         <h6>Warranty Expiry Date</h6>
-                        <input type="date" name="warranty_expiry_date" value="{{ form.warranty_expiry_date.data or warranty.warranty_expiry_date }}" class="form-control" required>
+                        <input type="date" name="warranty_expiry_date"
+                               value="{{ form.warranty_expiry_date.data or warranty.warranty_expiry_date }}"
+                               class="form-control" required>
                     </div>
 
                     <!-- Warranty Provider -->
                     <div class="info-card">
                         <h6>Warranty Provider</h6>
-                        <input type="text" name="warranty_provider" value="{{ form.warranty_provider.data or warranty.warranty_provider }}" class="form-control" required>
+                        <input type="text" name="warranty_provider"
+                               value="{{ form.warranty_provider.data or warranty.warranty_provider }}"
+                               class="form-control" required>
                     </div>
 
-                    <!-- Warranty Image Upload -->
-                    <div class="info-card">
-                        <h6>Upload New Image</h6>
-                        <input type="file" name="image" class="form-control">
-                    </div>
-                </div>
+                    <!--                    &lt;!&ndash; Warranty Image Upload &ndash;&gt;-->
+                    <!--                    <div class="info-card">-->
+                    <!--                        <h6>Upload New Image</h6>-->
+                    <!--                        <input type="file" name="image" class="form-control">-->
+                    <!--                    </div>-->
+                    <!--                </div>-->
 
-                <!-- Submit Button -->
-                <div class="submit-button">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="bi bi-check-circle"></i> Save Changes
-                    </button>
-                </div>
+                    <!-- Submit Button -->
+                    <div class="submit-button">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle"></i> Save Changes
+                        </button>
+                    </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+
+function previewImage(event) {
+const fileInput=event.target;
+const imagePreview=document.getElementById('current-image');
+
+// Check if a file was selected
+if (fileInput.files && fileInput.files[0]) {
+const reader = new FileReader();
+reader.onload = function (e) {
+// Update the image src to show the selected file
+imagePreview.src = e.target.result;
+};
+reader.readAsDataURL(fileInput.files[0]);
+}
+}
+</script>
+
 {% endblock %}

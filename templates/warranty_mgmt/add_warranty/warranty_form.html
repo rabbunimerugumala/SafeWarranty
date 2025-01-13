@@ -16,17 +16,17 @@
     <form method="POST" enctype="multipart/form-data" class="mb-5" novalidate>
         <!-- CSRF Token -->
         {{ form.csrf_token }}
+        <div>
+    <label>Category:</label>
+    <input type="text" name="category_name" value="{{ category.name }}" readonly class="form-control">
+    <input type="hidden" name="category_id" value="{{ category.id }}">
+</div>
 
-        <!-- Category Selection -->
-        <!-- Dropdowns -->
-        <div class="mb-3">
-            {{ form.category.label }}
-            {{ form.category(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.subcategory.label }}
-            {{ form.subcategory(class="form-control") }}
-        </div>
+<div>
+    <label>Subcategory:</label>
+    <input type="text" name="subcategory_name" value="{{ subcategory.name }}" readonly class="form-control">
+    <input type="hidden" name="subcategory_id" value="{{ subcategory.id }}">
+</div>
 
         <!-- Image Upload Field -->
         <div class="mb-3">
@@ -36,10 +36,14 @@
 
         <!-- Product Details Fields -->
         {{ render_input_field(field=form.product_name, label="Product Name *", placeholder="Product Name...") }}
-        {{ render_input_field(field=form.warranty_number, label="Warranty Number *", placeholder="Warranty Number...") }}
-        {{ render_input_field(field=form.product_purchase_date, label="Product Purchase Date *", placeholder="Enter your Product Purchase Date...") }}
-        {{ render_input_field(field=form.warranty_expiry_date, label="Warranty Expiry Date *", placeholder="Enter your Warranty Expiry Date...") }}
-        {{ render_input_field(field=form.warranty_provider, label="Warranty Provider *", placeholder="Enter your Warranty Provider...") }}
+        {{ render_input_field(field=form.warranty_number, label="Warranty Number *", placeholder="Warranty Number...")
+        }}
+        {{ render_input_field(field=form.product_purchase_date, label="Product Purchase Date *", placeholder="Enter your
+        Product Purchase Date...") }}
+        {{ render_input_field(field=form.warranty_expiry_date, label="Warranty Expiry Date *", placeholder="Enter your
+        Warranty Expiry Date...") }}
+        {{ render_input_field(field=form.warranty_provider, label="Warranty Provider *", placeholder="Enter your
+        Warranty Provider...") }}
 
         <!-- Submit Button -->
         <div class="mt-3">
@@ -52,18 +56,29 @@
 </div>
 
 <script>
-    // Update subcategories based on selected category
-    document.getElementById('category').addEventListener('change', function() {
-        const categoryId = this.value;
-        fetch(`/subcategories/${categoryId}`)
-            .then(response => response.json())
-            .then(data => {
-                let subcategoryOptions = '<option value="">Select a subcategory</option>';
-                data.subcategories.forEach(function(subcategory) {
-                    subcategoryOptions += `<option value="${subcategory.id}">${subcategory.name}</option>`;
-                });
-                document.getElementById('subcategory').innerHTML = subcategoryOptions;
-            });
+    // Preview the uploaded product image
+    document.getElementById('image').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('image-preview').src = e.target.result;
+                document.getElementById('image-preview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Ensure warranty expiry is after purchase date
+    document.getElementById('warranty_expiry_date').addEventListener('change', function() {
+        const purchaseDate = new Date(document.getElementById('product_purchase_date').value);
+        const expiryDate = new Date(this.value);
+
+        if (expiryDate <= purchaseDate) {
+            alert("Warranty expiry date must be after the purchase date.");
+            this.value = ""; // Clear the invalid date
+        }
     });
 </script>
+
 {% endblock %}

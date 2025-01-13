@@ -1,5 +1,11 @@
+import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
+from sqlalchemy.orm import Session
+from sqlalchemy.event import listen
+from utils.utils import delete_file
+
+
 
 db = SQLAlchemy()
 
@@ -23,6 +29,7 @@ class Subcategory(db.Model):
 
 
 class WarrantyCard(db.Model):
+    __tablename__ = 'warranty_card'
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.String(200), nullable=True)  # Path to the uploaded image
     product_name= db.Column(db.String(100), nullable=False)
@@ -39,5 +46,12 @@ class WarrantyCard(db.Model):
     category = db.relationship('Category', backref='warranties')
     subcategory = db.relationship('Subcategory', backref='warranties')
 
+def delete_image_on_warranty_delete(mapper, connection, target):
+    """Delete the image file when a warranty is deleted."""
+    if target.image:
+        file_path = os.path.join('static', target.image)
+        delete_file(file_path)
 
+# Attach the listener to the WarrantyCard model
+listen(WarrantyCard, 'before_delete', delete_image_on_warranty_delete)
 

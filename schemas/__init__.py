@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, validators, DateField, FileField, SelectField
+from wtforms import Form, StringField, validators, DateField, FileField
 from wtforms.validators import DataRequired
 from models import Category, Subcategory  # Import directly from models.py
 
@@ -7,8 +7,8 @@ from models import Category, Subcategory  # Import directly from models.py
 class RegisterWarrantyCard(Form):
     image = FileField('Product Image')
     # Category and Subcategory dropdowns
-    category = SelectField('Category', coerce=int, validators=[DataRequired()])
-    subcategory = SelectField('Subcategory', coerce=int, validators=[DataRequired()])
+    category = StringField('Category', [validators.DataRequired()], render_kw={"readonly": True})  # Readonly
+    subcategory = StringField('Subcategory', [validators.DataRequired()], render_kw={"readonly": True})  # Readonly
     product_name = StringField('first_name', [validators.Length(min=2, max=50), validators.DataRequired()])
     warranty_number = StringField('last_name', [validators.Length(min=2, max=50), validators.DataRequired()])
     product_purchase_date = DateField('product_purchase_date', format="%Y-%m-%d")

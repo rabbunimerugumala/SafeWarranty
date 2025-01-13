@@ -37,7 +37,6 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -53,34 +52,54 @@ def categories_page():
 def subcategories_page(category_id):
     category = Category.query.get_or_404(category_id)
     subcategories = Subcategory.query.filter_by(category_id=category.id).all()
-    return render_template('warranty_mgmt/add_warranty/subcategories.html', category=category, subcategories=subcategories)
+    return render_template('warranty_mgmt/add_warranty/subcategories.html', category=category,
+                            subcategories=subcategories)
 
 
 @app.route('/warranty_form', methods=('GET', 'POST'))
 def add_warranty():
-    form = RegisterWarrantyCard(request.form)
     # Get the subcategory_id from the URL
     subcategory_id = request.args.get('subcategory_id', type=int)
+    if not subcategory_id:
+        flash("Invalid subcategory. Please select a valid subcategory.", "danger")
+        return redirect(url_for('categories_page'))
+
+    # Fetch the subcategory and associated category
+    subcategory = Subcategory.query.get_or_404(subcategory_id)
+    category = Category.query.get_or_404(subcategory.category_id)
+
     form = RegisterWarrantyCard(request.form)
 
-    # Prefill the subcategory dropdown if subcategory_id is passed
-    if subcategory_id:
-        form.subcategory.data = subcategory_id
+    # Pre-fill the category and subcategory in the form
+    form.category.data = category.id
+    form.subcategory.data = subcategory.id
 
-    # Dynamically populate categories and subcategories
-    form.category.choices = [(cat.id, cat.name) for cat in Category.query.all()]
-    form.subcategory.choices = [(sub.id, sub.name) for sub in Subcategory.query.all()]
     if request.method == 'POST' and form.validate():
         try:
             # Get form data
-            category_id = int(request.form.get('category', '').strip())
-            subcategory_id = int(request.form.get('subcategory', '').strip())
             product_name = request.form.get('product_name', '').strip()
             warranty_number = request.form.get('warranty_number', '').strip()
             product_purchase_date = datetime.strptime(request.form.get('product_purchase_date').strip(), '%Y-%m-%d')
             warranty_expiry_date = datetime.strptime(request.form.get('warranty_expiry_date').strip(), '%Y-%m-%d')
             warranty_provider = request.form.get('warranty_provider', '').strip()
 
+            # Check for duplicate warranty
+            existing_warranty = WarrantyCard.query.filter_by(
+                warranty_number=warranty_number,
+                product_name=product_name,
+                category_id=category.id,
+                subcategory_id=subcategory.id
+            ).first()
+
+            if existing_warranty:
+                flash("This warranty already exists in the database.", "danger")
+                return render_template(
+                    'warranty_mgmt/add_warranty/warranty_form.html',
+                    form=form,
+                    category=category,
+                    subcategory=subcategory,
+                    page_heading="Add Warranty"
+                )
 
             # File upload handling
             image_file = request.files.get('image')
@@ -95,45 +114,51 @@ def add_warranty():
                 flash("Invalid or missing image file. Please upload a valid image (png, jpg, jpeg, gif).", "danger")
                 return render_template(
                     'warranty_mgmt/add_warranty/warranty_form.html',
-
-                )
-            try:
-                # Add new warranty card to the database
-                warranty_card = WarrantyCard(
-                    image=warranty_image,
-                    product_name=product_name,
-                    warranty_number=warranty_number,
-                    product_purchase_date=product_purchase_date,
-                    warranty_expiry_date=warranty_expiry_date,
-                    warranty_provider=warranty_provider,
-                    category_id=category_id,
-                    subcategory_id=subcategory_id
-
+                    form=form,
+                    category=category,
+                    subcategory=subcategory,
+                    page_heading="Add Warranty"
                 )
 
-                db.session.add(warranty_card)
-                db.session.commit()
-                flash('Warranty card added successfully!', 'success')
-                return redirect(url_for('get_warranties'))
+            # Add new warranty card to the database
+            warranty_card = WarrantyCard(
+                image=warranty_image,
+                product_name=product_name,
+                warranty_number=warranty_number,
+                product_purchase_date=product_purchase_date,
+                warranty_expiry_date=warranty_expiry_date,
+                warranty_provider=warranty_provider,
+                category_id=category.id,
+                subcategory_id=subcategory.id
+            )
 
-            except IntegrityError as e:
-                db.session.rollback()
-                flash(f'An error occurred while adding the warranty card: {e}', 'danger')
+            db.session.add(warranty_card)
+            db.session.commit()
+            flash('Warranty card added successfully!', 'success')
+            return redirect(url_for('get_warranties'))
+
+        except IntegrityError as e:
+            db.session.rollback()
+            flash(f'An error occurred while adding the warranty card: {e}', 'danger')
         except Exception as e:
             traceback.print_exc()
             flash(f'An unexpected error occurred: {e}', 'danger')
-    # Dynamically populate categories and subcategories
-    form.category.choices = [(cat.id, cat.name) for cat in Category.query.all()]
-    form.subcategory.choices = [(sub.id, sub.name) for sub in Subcategory.query.all()]
-    return render_template('warranty_mgmt/add_warranty/warranty_form.html',page_heading="Add Warranty",form=form)
 
+    return render_template(
+        'warranty_mgmt/add_warranty/warranty_form.html',
+        form=form,
+        category=category,
+        subcategory=subcategory,
+        page_heading="Add Warranty"
+    )
 
 
 # Route to display warranties
 @app.route('/view_warranties/<int:warranty_id>')
 def view_warranties(warranty_id):
     all_warranties = WarrantyCard.query.filter_by(id=warranty_id).first()
-    return render_template('warranty_mgmt/view_warranty.html', page_heading='View Warranty Details',all_warranties=all_warranties)
+    return render_template('warranty_mgmt/view_warranty.html', page_heading='View Warranty Details',
+                           all_warranties=all_warranties)
 
 
 @app.get('/get_warranties')
@@ -200,9 +225,49 @@ def edit_warranty(warranty_id):
                            warranty=warranty)
 
 
-@app.post('/delete_warranty/<int:warranty_id>')
+@app.route('/delete_warranty/<int:warranty_id>', methods=['POST'])
+# This route listens for POST requests at the URL '/delete_warranty/<warranty_id>'.
+# The '<int:warranty_id>' part of the URL indicates that it will capture an integer value for the warranty ID and pass it to the function.
+
 def delete_warranty(warranty_id):
+    # The function receives the 'warranty_id' from the URL as a parameter.
+
     warranty = WarrantyCard.query.get_or_404(warranty_id)
-    db.session.delete(warranty)
-    db.session.commit()
+    # This line queries the database using the WarrantyCard model to find the warranty record with the given ID.
+    # If no such record is found, it will automatically raise a 404 error (Page not found).
+
+    try:
+        db.session.delete(warranty)
+        # This line marks the warranty object for deletion in the database session.
+
+        db.session.commit()
+        # Commits the transaction to permanently delete the warranty from the database.
+
+        flash('Warranty deleted successfully!', 'success')
+        # If the deletion is successful, a success flash message is shown to the user.
+
+    except Exception as e:
+        db.session.rollback()
+        # If an error occurs during deletion, this line rolls back the transaction, undoing the delete action.
+
+        flash(f'Error deleting warranty: {e}', 'danger')
+        # A failure flash message is shown to the user, along with the exception message.
+
     return redirect(url_for('get_warranties'))
+    # After the operation (either success or failure), the user is redirected to the page where warranties are listed (get_warranties).
+
+
+
+@app.route('/search_warranties', methods=['GET'])
+def search_warranties():
+    search_query = request.args.get('search', '').strip()
+
+    if search_query:
+        # Perform search query on the WarrantyCard model based on the product_name
+        warranties = WarrantyCard.query.filter(WarrantyCard.product_name.ilike(f'%{search_query}%')).all()
+    else:
+        # If no search term, show all warranties
+        warranties = WarrantyCard.query.all()
+
+    return render_template('warranty_mgmt/view_warranty.html', warranties=warranties, search_query=search_query)
+
