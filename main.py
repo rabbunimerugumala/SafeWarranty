@@ -4,6 +4,8 @@ from auth.routes import auth
 from warranty_mgmt.routes import warranty_mgmt
 from flask_login import LoginManager, login_user, login_required, current_user
 import os
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate  # Add this import
 
 app = Flask(__name__)
 
@@ -14,7 +16,10 @@ app.secret_key = os.urandom(24)  # You can also use a fixed secret key in produc
 basedir = os.path.abspath(os.path.dirname(__file__))  # Get the base directory of the app
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(basedir, 'db', 'database.db')}"  # SQLite database URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking
+
+# Initialize the database and migrate object
 db.init_app(app)  # Initialize the database
+migrate = Migrate(app, db)  # Initialize the migrate object for database migrations
 
 # Flask-Login Initialization
 login_manager = LoginManager()

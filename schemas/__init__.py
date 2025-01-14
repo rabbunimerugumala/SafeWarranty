@@ -1,3 +1,5 @@
+#schemas/__init__.py
+
 from wtforms import Form, StringField, validators, DateField, FileField
 from wtforms.validators import DataRequired, InputRequired
 from models import Category, Subcategory  # Import directly from models.py

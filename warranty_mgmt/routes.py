@@ -8,11 +8,11 @@ from flask_login import login_required, current_user
 
 warranty_mgmt = Blueprint('warranty_mgmt', __name__)
 
+
 # Helper function to check allowed file types
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 
 @warranty_mgmt.route('/index')
@@ -21,11 +21,13 @@ def index():
     print(f"Is user authenticated: {current_user.is_authenticated}")
     return render_template('index.html')
 
+
 @warranty_mgmt.route('/add_warranty')
 @login_required
 def categories_page():
     categories = Category.query.all()
     return render_template('warranty_mgmt/add_warranty/categories_page.html', categories=categories)
+
 
 @warranty_mgmt.route('/subcategories/<int:category_id>')
 @login_required
@@ -34,6 +36,7 @@ def subcategories_page(category_id):
     subcategories = Subcategory.query.filter_by(category_id=category.id).all()
     return render_template('warranty_mgmt/add_warranty/subcategories.html', category=category,
                            subcategories=subcategories)
+
 
 @warranty_mgmt.route('/warranty_form', methods=('GET', 'POST'))
 @login_required
@@ -61,12 +64,13 @@ def add_warranty():
             warranty_expiry_date = datetime.strptime(request.form.get('warranty_expiry_date').strip(), '%Y-%m-%d')
             warranty_provider = request.form.get('warranty_provider', '').strip()
 
-            # Check for duplicate warranty
+            # Check for duplicate warranty, but now only for the logged-in user
             existing_warranty = WarrantyCard.query.filter_by(
                 warranty_number=warranty_number,
                 product_name=product_name,
                 category_id=category.id,
-                subcategory_id=subcategory.id
+                subcategory_id=subcategory.id,
+                user_id=current_user.id  # Check if the warranty is associated with the current user
             ).first()
 
             if existing_warranty:
@@ -98,7 +102,7 @@ def add_warranty():
                     page_heading="Add Warranty"
                 )
 
-            # Add new warranty card to the database
+            # Add new warranty card to the database with the user_id (link it to the current user)
             warranty_card = WarrantyCard(
                 image=warranty_image,
                 product_name=product_name,
@@ -107,7 +111,8 @@ def add_warranty():
                 warranty_expiry_date=warranty_expiry_date,
                 warranty_provider=warranty_provider,
                 category_id=category.id,
-                subcategory_id=subcategory.id
+                subcategory_id=subcategory.id,
+                user_id=current_user.id  # Associate this warranty with the current logged-in user
             )
 
             db.session.add(warranty_card)
@@ -126,18 +131,23 @@ def add_warranty():
         page_heading="Add Warranty"
     )
 
+
 @warranty_mgmt.route('/view_warranties/<int:warranty_id>')
 @login_required
 def view_warranties(warranty_id):
-    all_warranties = WarrantyCard.query.filter_by(id=warranty_id).first()
-    return render_template('warranty_mgmt/view_warranty.html', page_heading='View Warranty Details',
-                           all_warranties=all_warranties)
+    warranty = WarrantyCard.query.filter_by(id=warranty_id,
+                                            user_id=current_user.id).first()  # Ensure the warranty is associated with the logged-in user
+    if not warranty:
+        flash("Warranty not found or you do not have permission to view it.", "danger")
+        return redirect(url_for('warranty_mgmt.get_warranties'))
+    return render_template('warranty_mgmt/view_warranty.html', page_heading='View Warranty Details', warranty=warranty)
 
 
 @warranty_mgmt.route('/get_warranties')
 @login_required
 def get_warranties():
-    warranties = WarrantyCard.query.all()
+    # Fetch warranties only for the logged-in user
+    warranties = WarrantyCard.query.filter_by(user_id=current_user.id).all()
     return render_template('warranty_mgmt/warranties.html', page_heading='Warranty Details', warranties=warranties)
 
 
@@ -145,6 +155,12 @@ def get_warranties():
 @login_required
 def edit_warranty(warranty_id):
     warranty = WarrantyCard.query.get_or_404(warranty_id)
+
+    # Ensure the warranty belongs to the logged-in user before allowing edit
+    if warranty.user_id != current_user.id:
+        flash("You do not have permission to edit this warranty.", "danger")
+        return redirect(url_for('warranty_mgmt.get_warranties'))
+
     form = EditWarrantyCard(request.form)
 
     if request.method == 'POST' and form.validate():
@@ -173,13 +189,20 @@ def edit_warranty(warranty_id):
             flash(f"Error updating warranty: {e}", "danger")
 
     existing_image_url = url_for('static', filename=f'uploads/{warranty.image}') if warranty.image else None
-    return render_template('warranty_mgmt/edit_warranty.html', form=form, existing_image_url=existing_image_url, warranty=warranty)
+    return render_template('warranty_mgmt/edit_warranty.html', form=form, existing_image_url=existing_image_url,
+                           warranty=warranty)
 
 
 @warranty_mgmt.route('/delete_warranty/<int:warranty_id>', methods=['POST'])
 @login_required
 def delete_warranty(warranty_id):
     warranty = WarrantyCard.query.get_or_404(warranty_id)
+
+    # Ensure the warranty belongs to the logged-in user before allowing deletion
+    if warranty.user_id != current_user.id:
+        flash("You do not have permission to delete this warranty.", "danger")
+        return redirect(url_for('warranty_mgmt.get_warranties'))
+
     try:
         db.session.delete(warranty)
         db.session.commit()
@@ -196,6 +219,7 @@ def search_warranties():
     form = SearchWarrantyForm(request.form)
     if request.method == 'POST' and form.validate():
         warranty_product_name = request.form.get('warranty_product_name', '')
-        warranties = WarrantyCard.query.filter(WarrantyCard.product_name.like(f'{warranty_product_name}%')).all()
+        warranties = WarrantyCard.query.filter(WarrantyCard.product_name.like(f'{warranty_product_name}%'),
+                                               WarrantyCard.user_id == current_user.id).all()  # Only search the current user's warranties
         return render_template('warranty_mgmt/search_warranties.html', warranties=warranties, form=form)
     return render_template('warranty_mgmt/search_warranties.html', form=form)
