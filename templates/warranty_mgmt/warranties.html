@@ -66,24 +66,6 @@
 
 <div class="container">
 
-    <!-- Search Form -->
-    <form action="{{ url_for('search_warranties') }}" method="GET" class="form-inline">
-        <input type="text" name="search" class="form-control" placeholder="Search by Product Name" />
-        <button type="submit" class="btn btn-primary">Search</button>
-    </form>
-
-    <!-- Display Search Results -->
-    {% if warranties %}
-        <h3>Search Results for: "{{ search_query }}"</h3>
-        <ul>
-            {% for warranty in warranties %}
-                <li>{{ warranty.product_name }} - {{ warranty.warranty_number }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No warranties found matching "{{ search_query }}".</p>
-    {% endif %}
-
     <div class="card-container">
         {% for warranty in warranties %}
         <div class="data-card">
@@ -103,7 +85,7 @@
                 <h5 class="card-title">{{ warranty.product_name }}</h5>
 
                 <!-- View Details Button -->
-                <a href="{{ url_for('view_warranties', warranty_id=warranty.id) }}" class="view-details-btn "><i class="bi bi-eye"></i>
+                <a href="{{ url_for('warranty_mgmt.view_warranties', warranty_id=warranty.id) }}" class="view-details-btn "><i class="bi bi-eye"></i>
                     View Details
                 </a>
             </div>

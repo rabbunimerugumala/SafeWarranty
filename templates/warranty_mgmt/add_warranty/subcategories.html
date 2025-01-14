@@ -10,7 +10,7 @@
                 <div class="card-body text-center">
                     <h5 class="card-title">{{ subcategory.name }}</h5>
                     <!-- Make the subcategory clickable -->
-                    <a href="{{ url_for('add_warranty', subcategory_id=subcategory.id) }}" class="btn btn-primary">
+                    <a href="{{ url_for('warranty_mgmt.add_warranty', subcategory_id=subcategory.id) }}" class="btn btn-primary">
                         Add Warranty
                     </a>
                 </div>

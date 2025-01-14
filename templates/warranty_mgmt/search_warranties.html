@@ -1,22 +1,30 @@
 {% extends 'base.html' %}
+{% from "/includes/form_input.html" import render_input_field with context%}
 
 {% block content %}
-<!-- Search Form -->
-    <form action="{{ url_for('search_warranties') }}" method="GET" class="form-inline">
-        <input type="text" name="search" class="form-control" placeholder="Search by Product Name" />
-        <button type="submit" class="btn btn-primary">Search</button>
+<div class="container col-md-6">
+    <form action="" method="POST" novalidate>
+        {{render_input_field(field=form.warranty_product_name, placeholder="Enter Product Name ...", label="Product Name *")}}
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
     </form>
 
-    <!-- Display Search Results -->
-    {% if warranties %}
-        <h3>Search Results for: "{{ search_query }}"</h3>
-        <ul>
-            {% for warranty in warranties %}
-                <li>{{ warranty.product_name }} - {{ warranty.warranty_number }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No warranties found matching "{{ search_query }}".</p>
-    {% endif %}
+    <div class="container my-5">
+        {% if warranties %}
+            <ul class="list-group">
+                {% for warranty in warranties %}
+                    <li class="list-group-item">
+                        <a class="text-decoration-none" href="{{url_for('warranty_mgmt.view_warranties',warranty_id=warranty.id)}}" >{{warranty.product_name}} <span><i class="bi bi-box-arrow-up-right"></i></span></a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="alert alert-info text-center">
+                No Students Found
+            </div>
+        {% endif %}
+    </div>
 
-    {% endblock %}
+</div>
+{%endblock%}

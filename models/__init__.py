@@ -1,3 +1,6 @@
+# Models/__init__.py
+
+# Import necessary libraries
 import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
@@ -5,10 +8,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy.event import listen
 from utils.utils import delete_file
 
+from flask_login import UserMixin
 
 
+# Initialize SQLAlchemy
 db = SQLAlchemy()
-
 
 
 class Category(db.Model):
@@ -54,4 +58,18 @@ def delete_image_on_warranty_delete(mapper, connection, target):
 
 # Attach the listener to the WarrantyCard model
 listen(WarrantyCard, 'before_delete', delete_image_on_warranty_delete)
+
+
+
+class User(UserMixin, db.Model):
+    """
+    User model to store user data for authentication.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+
+    def __repr__(self):
+        return f"<User {self.username}>"
 
