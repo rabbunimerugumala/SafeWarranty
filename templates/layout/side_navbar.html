@@ -1,39 +1,38 @@
-
-    <style>
-        body {
-            overflow-x: hidden;
-        }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            width: 200px;
-            background-color: #343a40;
-            padding-top: 60px; /* Push below header */
-        }
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-        }
-         .content {
-        margin-left: 168px; /* Adjusted to match the new sidebar width */
-        padding: 30px;
+<style>
+    body {
+        overflow-x: hidden;
     }
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1030;
-            background-color: #343a40;
-            color: white;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-        }
-    </style>
+    .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 200px;
+        background-color: #343a40;
+        padding-top: 60px; /* Push below header */
+    }
+    .sidebar a {
+        color: white;
+        text-decoration: none;
+    }
+     .content {
+    margin-left: 168px; /* Adjusted to match the new sidebar width */
+    padding: 30px;
+}
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1030;
+        background-color: #343a40;
+        color: white;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+    }
+</style>
 <body>
 <div class="sidebar bg-dark">
     <ul class="nav flex-column">
@@ -57,7 +56,8 @@
         </li>
         <li class="nav-item">
             <a href="{{ url_for('warranty_mgmt.search_warranties') }}" class="nav-link">
-                <i class="bi bi-search fs-4 {{'active text-primary' if request.path == '/search_warranties' else 'text-light' }}"></i> Warranties
+                <i class="bi bi-search fs-4 {{'active text-primary' if request.path == '/search_warranties' else 'text-light' }}"></i>
+                Warranties
             </a>
         </li>
         <li class="nav-item">
@@ -75,11 +75,25 @@
                 <i class="bi bi-person fs-4"></i> Profile
             </a>
         </li>
+
+
+        <!-- This block of code is for the Logout button in the sidebar,
+             which will only be shown to authenticated users. -->
+        {% if current_user.is_authenticated %}
+        <!-- This 'li' element represents a list item in the navigation menu -->
         <li class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="bi bi-question-circle fs-4"></i> Help & Support
+            <!-- This 'a' tag represents a link that will navigate to the 'auth.logout' route -->
+            <!-- The 'nav-link' class is used to style the link, and the icon class (bi bi-box-arrow-right) is for the logout icon -->
+            <a href="{{ url_for('auth.logout') }}" class="nav-link">
+                <!-- The icon for logout using Bootstrap Icons (a right-facing arrow) -->
+                <i class="bi bi-box-arrow-right fs-4"></i>
+                <!-- The text for the logout option -->
+                Logout
             </a>
         </li>
+        {% endif %}
+
+
     </ul>
 </div>
 <div>

@@ -21,7 +21,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # Ensure login view is set for unauthorized access
-login_manager.login_view = 'auth.login'  # Redirect to login if unauthorized
+login_manager.login_view = 'auth.auth_page'  # Redirect to login if unauthorized
 login_manager.login_message_category = 'danger'  # Customize flash message category for login
 
 # Register blueprints
@@ -33,7 +33,7 @@ app.register_blueprint(warranty_mgmt, url_prefix='/warranty')  # All warranty-re
 def home():
     if current_user.is_authenticated:  # Check if the user is authenticated
         return redirect(url_for('warranty_mgmt.index'))  # Redirect to warranty_mgmt.index if logged in
-    return redirect(url_for('auth.login'))  # Otherwise, redirect to login page
+    return redirect(url_for('auth.auth_page'))  # Otherwise, redirect to login page
 
 # Load user by ID (required for Flask-Login)
 @login_manager.user_loader

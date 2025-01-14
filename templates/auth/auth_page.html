@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Page</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .switch-container {
+            padding: 20px 0;
+            background: #f7f7f7;
+        }
+
+        .switch {
+            display: flex;
+            align-items: center;
+            background: #eee;
+            border-radius: 30px;
+            padding: 5px;
+            position: relative;
+            width: 220px;
+            height: 40px;
+            margin: 0 auto;
+        }
+
+        .toggle {
+            background: #667eea;
+            border-radius: 25px;
+            position: absolute;
+            top: 5px;
+            bottom: 5px;
+            left: 5px;
+            width: calc(50% - 5px);
+            transition: all 0.3s ease;
+        }
+
+        .switch span {
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            z-index: 1;
+            color: #333;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .switch span:hover {
+            color: #667eea;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .form {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .form.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .form button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: #667eea;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.1s ease;
+            margin-top: 20px;
+        }
+
+        .form button:hover {
+            background: #764ba2;
+        }
+
+        .form button:active {
+            transform: scale(0.98);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 95%;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .switch {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <div class="switch-container">
+        <div class="switch">
+            <div class="toggle" id="toggle"></div>
+            <span id="sign-up">Sign Up</span>
+            <span id="login">Login</span>
+        </div>
+    </div>
+
+    <div class="form-container" id="form-container">
+        <!-- Sign Up Form -->
+        <form id="signup-form" method="POST" action="{{ url_for('auth.auth_page') }}" class="form">
+            <h2>Create Account</h2>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+            <button type="submit" name="sign-up">Sign Up</button>
+        </form>
+
+        <!-- Login Form -->
+        <form id="login-form" method="POST" action="{{ url_for('auth.auth_page') }}" class="form">
+            <h2>Welcome Back</h2>
+            <input type="email" name="username" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit" name="login">Login</button>
+        </form>
+    </div>
+</div>
+
+
+    <script>
+        const toggle = document.getElementById('toggle');
+        const signUp = document.getElementById('sign-up');
+        const login = document.getElementById('login');
+        const signupForm = document.getElementById('signup-form');
+        const loginForm = document.getElementById('login-form');
+
+        function switchForm(form) {
+            if (form === 'signup') {
+                toggle.style.left = '5px';
+                signupForm.classList.add('active');
+                loginForm.classList.remove('active');
+            } else {
+                toggle.style.left = 'calc(50% + 5px)';
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+            }
+        }
+
+        signUp.addEventListener('click', () => switchForm('signup'));
+        login.addEventListener('click', () => switchForm('login'));
+
+        switchForm('signup');
+    </script>
+</body>
+</html>
