@@ -1,30 +1,160 @@
 {% extends 'base.html' %}
-{% from "/includes/form_input.html" import render_input_field with context%}
+{% from "/includes/form_input.html" import render_input_field with context %}
 
 {% block content %}
-<div class="container col-md-6">
-    <form action="" method="POST" novalidate>
-        {{render_input_field(field=form.warranty_product_name, placeholder="Enter Product Name ...", label="Product Name *")}}
-        <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Search</button>
+<style>
+    /* General Styles */
+    .content-container {
+
+        display: flex;
+        justify-content: center; /* Center content horizontally */
+        align-items: center; /* Center content vertically */
+<!--        min-height: 100vh; /* Ensure full page height */-->
+        padding: 20px;
+        padding-left: 60px; /* Adjust for space from sidebar */
+        padding-right: 40px;
+        margin-top: 120px; /* Adjust for fixed sidebar or navbar */
+        margin-left: 100px; /* Adjust for fixed sidebar or navbar */
+
+
+    }
+
+    /* Search Card */
+    .search-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Soft shadow effect */
+        width: 100%;
+        max-width: 800px; /* Control the maximum width for larger screens */
+        padding: 30px;
+        border: 1px solid #e0e0e0;
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* For smooth effect */
+    }
+
+    .search-card:hover {
+        transform: translateY(-10px); /* Lift the card on hover */
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
+    }
+
+    /* Form Styling */
+    .search-form .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .search-form .btn-primary {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+        color: white;
+    }
+
+    .search-form .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    /* Search Results Styling */
+    .search-results .list-group-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.3s ease; /* Added transform */
+    }
+
+    .search-results .list-group-item:hover {
+        background-color:  #ecffe6;
+        transform: scale(1.03); /* Slightly enlarge on hover */
+    }
+
+    .search-results .list-group-item a {
+        font-size: 18px;
+        color: #333;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .search-results .list-group-item a:hover {
+        color: #007bff;
+        text-decoration: underline;
+    }
+
+    /* No Results Styling */
+    .no-results {
+        margin-top: 30px;
+        text-align: center;
+        font-size: 18px;
+        color: #6c757d;
+    }
+
+    /* Mobile View Fix */
+    @media (max-width: 768px) {
+        .content-container {
+            padding-left: 0; /* Remove padding for smaller screens */
+            margin-top: 0; /* Remove margin for mobile devices */
+        }
+
+        .search-card {
+        margin-top: 100px; /* Adjust for fixed sidebar or navbar */
+
+            padding: 20px;
+            width: 100%;
+            max-width: 100%; /* Full width for mobile */
+        }
+
+        .search-form .btn-primary {
+            font-size: 14px;
+            padding: 12px;
+        }
+
+        .search-results .list-group-item {
+            padding: 12px;
+        }
+
+        .search-results .list-group-item a {
+            font-size: 16px;
+        }
+    }
+</style>
+
+<div class="content-container">
+    <div class="search-card">
+        <!-- Warranty Search Form -->
+        <div class="search-form">
+            <form action="" method="POST" novalidate>
+                {{ render_input_field(field=form.warranty_product_name, placeholder="Enter Product Name ...", label="Product Name *") }}
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
         </div>
-    </form>
 
-    <div class="container my-5">
-        {% if warranties %}
-            <ul class="list-group">
-                {% for warranty in warranties %}
-                    <li class="list-group-item">
-                        <a class="text-decoration-none" href="{{url_for('warranty_mgmt.view_warranties',warranty_id=warranty.id)}}" >{{warranty.product_name}} <span><i class="bi bi-box-arrow-up-right"></i></span></a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div class="alert alert-info text-center">
-                No Students Found
-            </div>
-        {% endif %}
+        <!-- Search Results -->
+        <div class="search-results">
+            {% if warranties %}
+                <ul class="list-group">
+                    {% for warranty in warranties %}
+                        <li class="list-group-item d-flex justify-content-center" >
+                            <a href="{{ url_for('warranty_mgmt.view_warranties',warranty_id=warranty.id) }} " class="text-decoration-none ">
+                                {{ warranty.product_name }}
+                                <span><i class="bi bi-box-arrow-up-right"></i></span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="no-results">
+<!--                    No Warranties Found-->
+                </div>
+            {% endif %}
+        </div>
     </div>
-
 </div>
-{%endblock%}
+
+{% endblock %}

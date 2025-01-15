@@ -1,5 +1,49 @@
-  <footer id="sticky-footer" class="flex-shrink-0 py-2 bg-dark text-white-50">
+<!-- footer.html -->
+
+<style>
+    /* Sticky Footer */
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #343a40;
+        color: white;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 0.85rem;
+        z-index: 1000; /* Ensures the footer is on top of other content */
+    }
+
+    footer .small-text {
+        font-size: 0.7rem;
+        font-style: italic;
+        color: #bbb;
+    }
+
+    footer .small-text i {
+        color: #f1c40f; /* Golden heart */
+    }
+
+    footer .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    footer p {
+        margin: 0;
+    }
+
+    footer .text-primary {
+        color: #007bff;
+    }
+</style>
+
+<footer class="bg-dark text-light py-2">
     <div class="container text-center">
-      <small> &copy; 2025 Copyright: SafeWarranty.com</small>
+        <p class="mb-0">&copy; 2025 SafeWarranty. All Rights Reserved.</p>
+        <p class="mb-0 small-text fst-italic" style="font-size: 0.7rem;">Designed with <i class="bi bi-heart-fill text-warning"></i> by <span class="text-primary">RABBUNI MERUGUMALA</span></p>
     </div>
-  </footer>
+</footer>
+

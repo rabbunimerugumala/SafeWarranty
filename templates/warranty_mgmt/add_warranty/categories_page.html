@@ -1,15 +1,58 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    .content {
+        margin-left: 250px; /* Shift content to the right */
+        padding: 30px;
+        transition: margin-left 0.3s;
+    }
+
+    .content.shift {
+        margin-left: 0; /* No margin for mobile */
+    }
+
+    @media (max-width: 768px) {
+        .content {
+            margin-left: 0; /* Adjust content for mobile */
+        }
+
+        /* Add margin to cards in mobile view */
+        .card {
+            margin-left: 60px; /* Adds margin to the left */
+        }
+    }
+
+    /* Card hover effect */
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-10px); /* Moves the card up */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+    }
+
+    /* Button hover effect */
+    .view-btn {
+        transition: background-color 0.3s ease;
+    }
+
+    .view-btn:hover {
+        background-color: #0056b3; /* Darker blue shade */
+    }
+</style>
+
+<!-- Category Cards HTML -->
 <div class="container mt-5">
     <h1 class="text-center mb-4">Warranty Categories</h1>
     <div class="row">
         {% for category in categories %}
-        <div class="col-md-4 mb-4">
-            <div class="card">
+        <div class="col-md-4 col-sm-6 col-12 mb-4">
+            <div class="card h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title">{{ category.name }}</h5>
-                    <a href="{{ url_for('warranty_mgmt.subcategories_page', category_id=category.id) }}" class="btn btn-primary">
+                    <a href="{{ url_for('warranty_mgmt.subcategories_page', category_id=category.id) }}" class="btn btn-sm btn-primary view-btn">
                         View Subcategories
                     </a>
                 </div>
@@ -18,5 +61,5 @@
         {% endfor %}
     </div>
 </div>
-{% endblock %}
 
+{% endblock %}

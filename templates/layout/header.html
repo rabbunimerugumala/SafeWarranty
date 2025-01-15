@@ -1,7 +1,35 @@
-<nav class="navbar navbar-light bg-dark">
-  <div class="container-fluid justify-content-center">
-    <a class="fs-2 text-decoration-none" href="{{ url_for('warranty_mgmt.index') }}"><i class="bi bi-shield-check text-warning">
-    </i><span class="font-satisfy text-primary">Safe</span><span class="font-satisfy text-primary">Warranty</span></a>
-  </div>
+<!--
+This is the header for the SafeWarranty project.
+Purpose:
+- It contains a navigation bar with a brand logo and a link to the homepage.
+- Designed to be responsive and visually appealing.
+- Uses professional colors (Navy Blue, Light Gray, Golden Yellow) for branding.
 
+Features:
+- Fully responsive for mobile and desktop views.
+- Center-aligned content for a clean and professional look.
+- Uses Bootstrap classes for styling and responsiveness.
+-->
+
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3">
+  <!-- Container for central alignment and spacing -->
+  <div class="container-fluid justify-content-center">
+    <!-- Brand logo and name with a link to the homepage -->
+    <a class="fs-2 text-decoration-none d-flex align-items-center" href="{{ url_for('warranty_mgmt.index') }}">
+      <!-- Shield icon with golden yellow color -->
+      <i class="bi bi-shield-check text-warning"></i>
+      <!-- Brand name using professional typography -->
+      <span class="font-satisfy text-primary ms-2">Safe</span>
+      <span class="font-satisfy text-primary">Warranty</span>
+    </a>
+  </div>
 </nav>
+
+<!--
+Notes:
+1. The `navbar-expand-lg` class ensures the navbar adjusts for different screen sizes.
+2. The `bg-dark` and `text-light` classes apply the dark theme with light text.
+3. The `text-warning` class adds the golden yellow accent for the icon.
+4. The `fs-2` class controls font size, and `d-flex align-items-center` centers items vertically.
+5. Added spacing with `ms-2` for a cleaner look.
+-->

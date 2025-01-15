@@ -17,13 +17,13 @@
         <!-- CSRF Token -->
         {{ form.csrf_token }}
         <div>
-    <label>Category:</label>
+    <label>Category *</label>
     <input type="text" name="category_name" value="{{ category.name }}" readonly class="form-control">
     <input type="hidden" name="category_id" value="{{ category.id }}">
 </div>
 
 <div>
-    <label>Subcategory:</label>
+    <label>Subcategory *</label>
     <input type="text" name="subcategory_name" value="{{ subcategory.name }}" readonly class="form-control">
     <input type="hidden" name="subcategory_id" value="{{ subcategory.id }}">
 </div>

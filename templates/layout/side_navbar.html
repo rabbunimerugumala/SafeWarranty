@@ -1,109 +1,199 @@
 <style>
+    /* Basic Styles */
     body {
-        overflow-x: hidden;
+        overflow-x: hidden; /* Prevents horizontal scrolling */
+        margin: 0; /* Removes default body margin */
     }
+
+    /* Sidebar Styles */
     .sidebar {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        width: 200px;
-        background-color: #343a40;
-        padding-top: 60px; /* Push below header */
+        position: fixed; /* Fixed position to stay in place when scrolling */
+        top: 0; /* Align to the top */
+        bottom: 0; /* Extend to the bottom */
+        left: 0; /* Align to the left */
+        width: 200px; /* Sidebar width */
+        background-color: #343a40; /* Dark background color */
+        padding-top: 60px; /* Adds space at the top to avoid header overlap */
+        transition: all 0.3s ease; /* Smooth transition for resizing */
+        z-index: 1000; /* Ensures the sidebar is above other content */
     }
+
     .sidebar a {
-        color: white;
-        text-decoration: none;
+        color: white; /* White text color */
+        text-decoration: none; /* Remove underlines from links */
+        display: flex; /* Flexbox for aligning icons and text */
+        align-items: center; /* Vertically center the content */
+        padding: 12px 20px; /* Padding inside each link for spacing */
+        transition: background-color 0.3s ease; /* Smooth hover effect */
+        border-bottom: 1px solid #495057; /* Line between each link */
     }
-     .content {
-    margin-left: 168px; /* Adjusted to match the new sidebar width */
-    padding: 30px;
-}
+
+    .sidebar a:hover {
+<!--        background-color: #495057; /* Darker shade on hover */-->
+    }
+
+    /* Sidebar for Mobile */
+    .sidebar.mobile-view {
+        width: 220px; /* Smaller width for mobile screens */
+    }
+
+    /* Display icons and names on larger screens */
+    .sidebar a span {
+        margin-left: 10px; /* Adds space between icon and text */
+        display: inline; /* Show name by default */
+    }
+
+    /* Mobile view: Hide names and only show icons */
+    @media (max-width: 768px) { /* Styles for screens smaller than 768px */
+        .sidebar.mobile-view {
+            width: 60px; /* Collapse sidebar to 60px on mobile */
+        }
+
+        /* Hide the text names in mobile view */
+        .sidebar.mobile-view a span {
+            display: none; /* Hides names on mobile */
+        }
+
+        /* Show toggle button (hamburger) on mobile */
+        .sidebar-toggle {
+            display: block; /* Makes the hamburger button visible */
+            position: fixed; /* Fixed at the top of the page */
+            top: 20px; /* Position it 20px from the top */
+            left: 20px; /* Position it 20px from the left */
+            font-size: 30px; /* Large font for the hamburger */
+            color: white; /* White color for the button */
+            cursor: pointer; /* Pointer cursor for interaction */
+            z-index: 1050; /* Make sure it's above other elements */
+            transition: color 0.3s ease; /* Transition for color change */
+        }
+
+        /* When the sidebar is expanded on mobile, show names */
+        .sidebar.mobile-view.open {
+            width: 200px; /* Expand the sidebar back to 250px */
+        }
+
+        .sidebar.mobile-view.open a span {
+            display: inline; /* Show names again when expanded */
+        }
+
+        /* Change the color of hamburger icon when the sidebar is open */
+        .sidebar.mobile-view.open .sidebar-toggle {
+            color: blue; /* Change hamburger to blue when sidebar is open */
+        }
+
+        /* Adjust content layout when sidebar is collapsed */
+        .content {
+            margin-left: 0; /* No margin for content when sidebar is collapsed */
+        }
+    }
+
+    /* Content Styles */
+    .content {
+<!--        margin-left: 250px; /* Shift content to the right to make space for the sidebar */-->
+<!--        padding: 30px; /* Adds padding around the content */-->
+<!--        transition: margin-left 0.3s; /* Smooth transition for content shift */-->
+    }
+
+    .content.shift {
+        margin-left: 0; /* No margin when sidebar is collapsed */
+    }
+
+    /* Header Styles */
     .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 1030;
-        background-color: #343a40;
-        color: white;
-        height: 60px;
-        display: flex;
-        align-items: center;
-        padding: 0 20px;
+        position: fixed; /* Fixed at the top */
+        top: 0; /* Align to the top of the page */
+        left: 0; /* Align to the left of the page */
+        width: 100%; /* Full width */
+        z-index: 1030; /* Layer above other content */
+        background-color: #343a40; /* Dark background color */
+        color: white; /* White text color */
+        height: 60px; /* Fixed height for header */
+        display: flex; /* Use flexbox for centering content */
+        align-items: center; /* Vertically center content */
+<!--        padding: 0 20px; /* Add padding inside the header */-->
     }
 </style>
+
 <body>
-<div class="sidebar bg-dark">
+<!-- Sidebar -->
+<div class="sidebar bg-dark mobile-view">
+    <!-- Hamburger Toggle for Mobile -->
+    <span class="sidebar-toggle" onclick="toggleSidebar()">&#9776;</span> <!-- Hamburger icon to toggle sidebar -->
     <ul class="nav flex-column">
+        <!-- List of navigation items -->
         <li class="nav-item">
             <a href="{{ url_for('warranty_mgmt.index') }}" class="nav-link">
-                <i class="bi bi-house fs-4 {{'active text-primary' if request.path == '/' else 'text-light' }}"></i>
-                Dashboard
+                <i class="bi bi-house fs-4 {% if '/index' in request.path %}active text-primary{% else %}text-light{% endif %}"></i>
+                <span>Dashboard</span>
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ url_for('warranty_mgmt.categories_page') }}" class="nav-link">
-                <i class="bi bi-file-earmark-plus fs-4 {{'active text-primary' if request.path == '/add_warranty' else 'text-light' }}"></i>
-                Add Warranty
+                <i class="bi bi-file-earmark-plus fs-4 {% if '/add_warranty' in request.path %}active text-primary{% else %}text-light{% endif %}"></i>
+                <span>Add Warranty</span>
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ url_for('warranty_mgmt.get_warranties') }}" class="nav-link">
-                <i class="bi bi-view-stacked fs-4 {{'active text-primary' if request.path == '/get_warranties' else 'text-light' }}"></i>
-                My Warranties
+                <i class="bi bi-view-stacked fs-4 {% if '/get_warranties' in request.path %}active text-primary{% else %}text-light{% endif %}"></i>
+                <span>My Warranties</span>
             </a>
         </li>
         <li class="nav-item">
             <a href="{{ url_for('warranty_mgmt.search_warranties') }}" class="nav-link">
-                <i class="bi bi-search fs-4 {{'active text-primary' if request.path == '/search_warranties' else 'text-light' }}"></i>
-                Warranties
+                <i class="bi bi-search fs-4 {% if '/search_warranties' in request.path %}active text-primary{% else %}text-light{% endif %}"></i>
+                <span>Warranties</span>
             </a>
         </li>
         <li class="nav-item">
             <a href="#" class="nav-link">
-                <i class="bi bi-bell fs-4"></i> Reminders
+                <i class="bi bi-bell fs-4"></i>
+                <span>Reminders</span>
             </a>
         </li>
         <li class="nav-item">
             <a href="#" class="nav-link">
-                <i class="bi bi-gear fs-4"></i> Settings
+                <i class="bi bi-gear fs-4"></i>
+                <span>Settings</span>
             </a>
         </li>
         <li class="nav-item">
             <a href="#" class="nav-link">
-                <i class="bi bi-person fs-4"></i> Profile
+                <i class="bi bi-person fs-4"></i>
+                <span>Profile</span>
             </a>
         </li>
 
-
-        <!-- This block of code is for the Logout button in the sidebar,
-             which will only be shown to authenticated users. -->
+        <!-- Logout option -->
         {% if current_user.is_authenticated %}
-        <!-- This 'li' element represents a list item in the navigation menu -->
         <li class="nav-item">
-            <!-- This 'a' tag represents a link that will navigate to the 'auth.logout' route -->
-            <!-- The 'nav-link' class is used to style the link, and the icon class (bi bi-box-arrow-right) is for the logout icon -->
             <a href="{{ url_for('auth.logout') }}" class="nav-link">
-                <!-- The icon for logout using Bootstrap Icons (a right-facing arrow) -->
-                <i class="bi bi-box-arrow-right fs-4"></i>
-                <!-- The text for the logout option -->
-                Logout
+                <i class="bi bi-box-arrow-right fs-4 "></i>
+                <span>Logout</span>
             </a>
         </li>
         {% endif %}
-
-
     </ul>
 </div>
-<div>
+
+<!-- Content Area -->
+<div id="content" class="content">
     {% block content %}
     <!-- Content for each page goes here -->
     {% endblock %}
 </div>
+
 <!-- Include Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Sidebar Toggle Script -->
+<script>
+    // Function to toggle the sidebar (expand/collapse)
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar'); // Get sidebar element
+        const content = document.querySelector('#content'); // Get content area
+        sidebar.classList.toggle('open'); // Toggle the 'open' class on the sidebar
+        content.classList.toggle('shift'); // Toggle the 'shift' class on content to shift it when sidebar is collapsed
+    }
+</script>
 </body>
-
-
-
