@@ -3,8 +3,7 @@
 {% block content %}
 <style>
     .content {
-        margin-left: 250px; /* Shift content to the right */
-        padding: 30px;
+<!--        padding: 30px;-->
         transition: margin-left 0.3s;
     }
 
@@ -14,7 +13,10 @@
 
     @media (max-width: 768px) {
         .content {
-            margin-left: 0; /* Adjust content for mobile */
+            margin-left: 0px; /* Adjust content for mobile */
+        }
+         .content h1{
+            margin-left: 55px; /* Adjust content for mobile */
         }
 
         /* Add margin to cards in mobile view */

@@ -1,126 +1,152 @@
 <style>
     /* Basic Styles */
     body {
-        overflow-x: hidden; /* Prevents horizontal scrolling */
-        margin: 0; /* Removes default body margin */
+        overflow-x: hidden;
+        margin: 0;
     }
 
     /* Sidebar Styles */
     .sidebar {
-        position: fixed; /* Fixed position to stay in place when scrolling */
-        top: 0; /* Align to the top */
-        bottom: 0; /* Extend to the bottom */
-        left: 0; /* Align to the left */
-        width: 200px; /* Sidebar width */
-        background-color: #343a40; /* Dark background color */
-        padding-top: 60px; /* Adds space at the top to avoid header overlap */
-        transition: all 0.3s ease; /* Smooth transition for resizing */
-        z-index: 1000; /* Ensures the sidebar is above other content */
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 60px; /* Collapsed width (icons only) */
+        background-color: #343a40;
+        padding-top: 60px;
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    /* Change toggle button color when sidebar is open */
+    .sidebar.open ~ .sidebar-toggle {
+        color: blue;
+    }
+
+    .sidebar.open {
+        width: 200px; /* Expanded width */
     }
 
     .sidebar a {
-        color: white; /* White text color */
-        text-decoration: none; /* Remove underlines from links */
-        display: flex; /* Flexbox for aligning icons and text */
-        align-items: center; /* Vertically center the content */
-        padding: 12px 20px; /* Padding inside each link for spacing */
-        transition: background-color 0.3s ease; /* Smooth hover effect */
-        border-bottom: 1px solid #495057; /* Line between each link */
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        transition: background-color 0.3s ease, padding 0.3s ease;
+        border-bottom: 1px solid #495057;
     }
 
-    .sidebar a:hover {
-<!--        background-color: #495057; /* Darker shade on hover */-->
-    }
+<!--    .sidebar a:hover {-->
+<!--        background-color: #495057;-->
+<!--    }-->
 
-    /* Sidebar for Mobile */
-    .sidebar.mobile-view {
-        width: 220px; /* Smaller width for mobile screens */
-    }
-
-    /* Display icons and names on larger screens */
     .sidebar a span {
-        margin-left: 10px; /* Adds space between icon and text */
-        display: inline; /* Show name by default */
+        margin-left: 10px;
+        display: none; /* Hide text by default */
     }
 
-    /* Mobile view: Hide names and only show icons */
-    @media (max-width: 768px) { /* Styles for screens smaller than 768px */
-        .sidebar.mobile-view {
-            width: 60px; /* Collapse sidebar to 60px on mobile */
+    .sidebar.open a span {
+        display: inline; /* Show text when sidebar is expanded */
+    }
+
+    /* Sidebar Hover Effect (Desktop Only) */
+    @media (min-width: 769px) {
+        .sidebar:hover {
+            width: 200px; /* Expand the sidebar on hover */
         }
 
-        /* Hide the text names in mobile view */
-        .sidebar.mobile-view a span {
-            display: none; /* Hides names on mobile */
+        .sidebar:hover a span {
+            display: inline; /* Show text on hover */
         }
 
-        /* Show toggle button (hamburger) on mobile */
-        .sidebar-toggle {
-            display: block; /* Makes the hamburger button visible */
-            position: fixed; /* Fixed at the top of the page */
-            top: 20px; /* Position it 20px from the top */
-            left: 20px; /* Position it 20px from the left */
-            font-size: 30px; /* Large font for the hamburger */
-            color: white; /* White color for the button */
-            cursor: pointer; /* Pointer cursor for interaction */
-            z-index: 1050; /* Make sure it's above other elements */
-            transition: color 0.3s ease; /* Transition for color change */
-        }
-
-        /* When the sidebar is expanded on mobile, show names */
-        .sidebar.mobile-view.open {
-            width: 200px; /* Expand the sidebar back to 250px */
-        }
-
-        .sidebar.mobile-view.open a span {
-            display: inline; /* Show names again when expanded */
-        }
-
-        /* Change the color of hamburger icon when the sidebar is open */
-        .sidebar.mobile-view.open .sidebar-toggle {
-            color: blue; /* Change hamburger to blue when sidebar is open */
-        }
-
-        /* Adjust content layout when sidebar is collapsed */
         .content {
-            margin-left: 0; /* No margin for content when sidebar is collapsed */
+            margin-left: 60px; /* Default margin when sidebar is collapsed */
+        }
+
+        .sidebar:hover ~ .content {
+            margin-left: 200px; /* Adjust margin when sidebar is expanded */
         }
     }
 
     /* Content Styles */
     .content {
-<!--        margin-left: 250px; /* Shift content to the right to make space for the sidebar */-->
-<!--        padding: 30px; /* Adds padding around the content */-->
-<!--        transition: margin-left 0.3s; /* Smooth transition for content shift */-->
+        margin-left: 60px; /* Default margin for collapsed sidebar */
+<!--        padding: 30px;-->
+        transition: margin-left 0.3s ease;
     }
 
-    .content.shift {
-        margin-left: 0; /* No margin when sidebar is collapsed */
+    .sidebar.open ~ .content {
+        margin-left: 200px; /* Adjust margin for expanded sidebar */
     }
 
     /* Header Styles */
     .header {
-        position: fixed; /* Fixed at the top */
-        top: 0; /* Align to the top of the page */
-        left: 0; /* Align to the left of the page */
-        width: 100%; /* Full width */
-        z-index: 1030; /* Layer above other content */
-        background-color: #343a40; /* Dark background color */
-        color: white; /* White text color */
-        height: 60px; /* Fixed height for header */
-        display: flex; /* Use flexbox for centering content */
-        align-items: center; /* Vertically center content */
-<!--        padding: 0 20px; /* Add padding inside the header */-->
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1030;
+        background-color: #343a40;
+        color: white;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+    }
+
+    .sidebar-toggle {
+        display: none; /* Hidden for desktop by default */
+        position: fixed;
+        top: 15px;
+        left: 20px;
+        font-size: 25px;
+        color: white;
+        cursor: pointer;
+        z-index: 1050;
+        transition: color 0.3s ease;
+
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 60px; /* Fully collapsed on mobile by default */
+            overflow: hidden;
+        }
+
+
+
+        .sidebar.open {
+            width: 200px; /* Expand to full width on toggle */
+        }
+
+        .sidebar a span {
+            display: none; /* Hide text by default in mobile view */
+        }
+
+        .sidebar.open a span {
+            display: inline; /* Show text when expanded */
+        }
+
+        .content {
+            margin-left: 0; /* No margin when sidebar is collapsed */
+        }
+
+        .content.shift {
+            margin-left: 200px; /* Adjust content margin when sidebar is expanded */
+        }
+
+        .sidebar-toggle {
+            display: block; /* Show toggle button in mobile view */
+        }
     }
 </style>
 
 <body>
 <!-- Sidebar -->
-<div class="sidebar bg-dark mobile-view">
-    <!-- Hamburger Toggle for Mobile -->
-    <span class="sidebar-toggle" onclick="toggleSidebar()">&#9776;</span> <!-- Hamburger icon to toggle sidebar -->
+<div class="sidebar bg-dark">
+    <!-- Navigation items -->
     <ul class="nav flex-column">
-        <!-- List of navigation items -->
         <li class="nav-item">
             <a href="{{ url_for('warranty_mgmt.index') }}" class="nav-link">
                 <i class="bi bi-house fs-4 {% if '/index' in request.path %}active text-primary{% else %}text-light{% endif %}"></i>
@@ -163,12 +189,10 @@
                 <span>Profile</span>
             </a>
         </li>
-
-        <!-- Logout option -->
         {% if current_user.is_authenticated %}
         <li class="nav-item">
             <a href="{{ url_for('auth.logout') }}" class="nav-link">
-                <i class="bi bi-box-arrow-right fs-4 "></i>
+                <i class="bi bi-box-arrow-right fs-4"></i>
                 <span>Logout</span>
             </a>
         </li>
@@ -176,24 +200,23 @@
     </ul>
 </div>
 
+<!-- Sidebar Toggle Button -->
+<span class="sidebar-toggle" onclick="toggleSidebar()">&#9776;</span>
+
 <!-- Content Area -->
-<div id="content" class="content">
+<div class="content">
     {% block content %}
     <!-- Content for each page goes here -->
     {% endblock %}
 </div>
 
-<!-- Include Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Sidebar Toggle Script -->
+<!-- JavaScript -->
 <script>
-    // Function to toggle the sidebar (expand/collapse)
     function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar'); // Get sidebar element
-        const content = document.querySelector('#content'); // Get content area
-        sidebar.classList.toggle('open'); // Toggle the 'open' class on the sidebar
-        content.classList.toggle('shift'); // Toggle the 'shift' class on content to shift it when sidebar is collapsed
+        const sidebar = document.querySelector('.sidebar');
+        const content = document.querySelector('.content');
+        sidebar.classList.toggle('open');
+        content.classList.toggle('shift');
     }
 </script>
 </body>
