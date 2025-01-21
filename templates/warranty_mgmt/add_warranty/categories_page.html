@@ -3,6 +3,8 @@
 {% block content %}
 <style>
     .content {
+        margin-bottom:70px;
+
 <!--        padding: 30px;-->
         transition: margin-left 0.3s;
     }
@@ -54,7 +56,8 @@
             <div class="card h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title">{{ category.name }}</h5>
-                    <a href="{{ url_for('warranty_mgmt.subcategories_page', category_id=category.id) }}" class="btn btn-sm btn-primary view-btn">
+                    <a class="btn btn-sm btn-primary view-btn"
+                       href="{{ url_for('warranty_mgmt.subcategories_page', category_id=category.id) }}">
                         View Subcategories
                     </a>
                 </div>

@@ -3,6 +3,8 @@
 {% block content %}
 <style>
     .content {
+        margin-bottom:70px;
+
 <!--        margin-left: 250px; /* Space for the sidebar */-->
         padding: 30px;
         transition: margin-left 0.3s;
@@ -50,7 +52,8 @@
                 <div class="card-body text-center">
                     <h5 class="card-title">{{ subcategory.name }}</h5>
                     <!-- Button to add warranty -->
-                    <a href="{{ url_for('warranty_mgmt.add_warranty', subcategory_id=subcategory.id) }}" class="btn btn-primary">
+                    <a class="btn btn-primary"
+                       href="{{ url_for('warranty_mgmt.add_warranty', subcategory_id=subcategory.id) }}">
                         Add Warranty
                     </a>
                 </div>

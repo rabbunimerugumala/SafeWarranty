@@ -1,11 +1,29 @@
+"""
+Warranty Management Blueprint
+Author : RABBUNI MERUGUMALA
+
+Description:-
+This module handles all warranty-related functionalities within the application, such as:
+1. Adding warranty cards
+2. Viewing warranty cards
+3. Editing and deleting warranty cards
+4. Searching warranties
+5. Delete Warranties
+
+The routes here are protected and require user authentication using Flask-Login.
+"""
+
+import os
+from datetime import datetime
+
 from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
+
 from models import WarrantyCard, Category, Subcategory, db
 from schemas import RegisterWarrantyCard, EditWarrantyCard, SearchWarrantyForm
-from datetime import datetime
-import os
-from werkzeug.utils import secure_filename
-from flask_login import login_required, current_user
 
+# Initialize the warranty management blueprint
 warranty_mgmt = Blueprint('warranty_mgmt', __name__)
 
 
@@ -15,9 +33,14 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+# Route: Warranty Management Homepage
 @warranty_mgmt.route('/index')
 @login_required
 def index():
+    """
+    Displays the index page for warranty management.
+    This is the landing page after login.
+    """
     print(f"Is user authenticated: {current_user.is_authenticated}")
     return render_template('index.html')
 
@@ -25,6 +48,9 @@ def index():
 @warranty_mgmt.route('/add_warranty')
 @login_required
 def categories_page():
+    """
+        Displays a list of warranty categories that the user can select from.
+    """
     categories = Category.query.all()
     return render_template('warranty_mgmt/add_warranty/categories_page.html', categories=categories)
 

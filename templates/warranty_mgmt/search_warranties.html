@@ -128,9 +128,10 @@
         <!-- Warranty Search Form -->
         <div class="search-form">
             <form action="" method="POST" novalidate>
-                {{ render_input_field(field=form.warranty_product_name, placeholder="Enter Product Name ...", label="Product Name *") }}
+                {{ render_input_field(field=form.warranty_product_name, placeholder="Enter Product Name ...",
+                label="Product Name *") }}
                 <div class="mb-3">
-                    <button type="submit" class="btn btn-primary">Search</button>
+                    <button class="btn btn-primary" type="submit">Search</button>
                 </div>
             </form>
         </div>
@@ -138,20 +139,21 @@
         <!-- Search Results -->
         <div class="search-results">
             {% if warranties %}
-                <ul class="list-group">
-                    {% for warranty in warranties %}
-                        <li class="list-group-item d-flex justify-content-center" >
-                            <a href="{{ url_for('warranty_mgmt.view_warranties',warranty_id=warranty.id) }} " class="text-decoration-none ">
-                                {{ warranty.product_name }}
-                                <span><i class="bi bi-box-arrow-up-right"></i></span>
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
+            <ul class="list-group">
+                {% for warranty in warranties %}
+                <li class="list-group-item d-flex justify-content-center">
+                    <a class="text-decoration-none "
+                       href="{{ url_for('warranty_mgmt.view_warranties',warranty_id=warranty.id) }} ">
+                        {{ warranty.product_name }}
+                        <span><i class="bi bi-box-arrow-up-right"></i></span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
             {% else %}
-                <div class="no-results">
-<!--                    No Warranties Found-->
-                </div>
+            <div class="no-results">
+                <!--                    No Warranties Found-->
+            </div>
             {% endif %}
         </div>
     </div>

@@ -3,6 +3,8 @@
 {% block content %}
 <style>
     .content {
+        margin-bottom:70px;
+
 <!--        margin-left: 250px; /* Shift content to the right for larger screens */-->
 <!--        padding: 30px;-->
         transition: margin-left 0.3s;
@@ -85,7 +87,8 @@
         <div class="col-md-4 col-sm-6 col-12 mb-4">
             <div class="card h-100">
                 {% if warranty.image %}
-                <img src="{{ url_for('static', filename=warranty.image) }}" class="card-img-top" alt="{{ warranty.product_name }}" style="height: 180px; object-fit: cover;">
+                <img alt="{{ warranty.product_name }}" class="card-img-top"
+                     src="{{ url_for('static', filename=warranty.image) }}" style="height: 180px; object-fit: cover;">
                 {% else %}
                 <div class="card-img-placeholder">
                     <i class="bi bi-image"></i>
@@ -93,7 +96,8 @@
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ warranty.product_name }}</h5>
-                    <a href="{{ url_for('warranty_mgmt.view_warranties', warranty_id=warranty.id) }}" class="btn btn-sm btn-primary view-btn">
+                    <a class="btn btn-sm btn-primary view-btn"
+                       href="{{ url_for('warranty_mgmt.view_warranties', warranty_id=warranty.id) }}">
                         <i class="bi bi-eye"></i> View Details
                     </a>
                 </div>

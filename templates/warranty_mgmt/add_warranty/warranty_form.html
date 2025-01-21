@@ -2,72 +2,141 @@
 {% from "includes/form_input.html" import render_input_field with context %}
 
 {% block content %}
-<div class="col-md-6 container">
-    {% if status == "success" %}
-    <div class="alert alert-success text-center">
-        Warranty successfully registered.
-    </div>
-    {% elif status == "error" %}
-    <div class="alert alert-danger text-center">
-        Something went wrong! Warranty registration failed.
-    </div>
-    {% endif %}
+<style>
+    /* Card-style container */
+    .form-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 70px;
+    }
 
-    <form method="POST" enctype="multipart/form-data" class="mb-5" novalidate>
-        <!-- CSRF Token -->
-        {{ form.csrf_token }}
-        <div>
-    <label>Category *</label>
-    <input type="text" name="category_name" value="{{ category.name }}" readonly class="form-control">
-    <input type="hidden" name="category_id" value="{{ category.id }}">
-</div>
+    /* Hover effect */
+    .form-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
 
-<div>
-    <label>Subcategory *</label>
-    <input type="text" name="subcategory_name" value="{{ subcategory.name }}" readonly class="form-control">
-    <input type="hidden" name="subcategory_id" value="{{ subcategory.id }}">
-</div>
+    /* Form element styling */
+    .form-container label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
 
-        <!-- Image Upload Field -->
-        <div class="mb-3">
-            <label for="image">Upload Image</label>
-            <input type="file" id="image" name="image" class="form-control">
+    .form-container input,
+    .form-container button {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    /* Adjust input and button spacing for mobile */
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 15px;
+            margin-left: 170px;
+
+        }
+
+        .form-container label {
+            font-size: 0.9rem;
+        }
+
+        .form-container input,
+        .form-container button {
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Heading Style */
+    .form-heading {
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333333;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 form-container">
+            <!-- Heading -->
+            <div class="form-heading">ADD WARRANTY</div>
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <!-- Alerts for status -->
+            {% if status == "success" %}
+            <div class="alert alert-success text-center">
+                Warranty successfully registered.
+            </div>
+            {% elif status == "error" %}
+            <div class="alert alert-danger text-center">
+                Something went wrong! Warranty registration failed.
+            </div>
+            {% endif %}
+
+            <!-- Form Start -->
+            <form class="needs-validation form-responsive" enctype="multipart/form-data" method="POST" novalidate>
+                <!-- CSRF Token -->
+                {{ form.csrf_token }}
+
+                <!-- Category Fields -->
+                <div class="mb-3">
+                    <label>Category *</label>
+                    <input class="form-control" name="category_name" readonly type="text" value="{{ category.name }}">
+                    <input name="category_id" type="hidden" value="{{ category.id }}">
+                </div>
+
+                <div class="mb-3">
+                    <label>Subcategory *</label>
+                    <input class="form-control" name="subcategory_name" readonly type="text"
+                           value="{{ subcategory.name }}">
+                    <input name="subcategory_id" type="hidden" value="{{ subcategory.id }}">
+                </div>
+
+                <!-- Image Upload Field -->
+                <div class="mb-3">
+                    <label for="image">Upload Image *</label>
+                    <input class="form-control" id="image" name="image" required type="file">
+                </div>
+
+                <!-- Product Details Fields -->
+                {{ render_input_field(field=form.product_name, label="Product Name *", placeholder="Product Name...") }}
+                {{ render_input_field(field=form.warranty_number, label="Warranty Number *", placeholder="Warranty
+                Number...") }}
+                {{ render_input_field(field=form.product_purchase_date, label="Product Purchase Date *",
+                placeholder="Enter your Product Purchase Date...") }}
+                {{ render_input_field(field=form.warranty_expiry_date, label="Warranty Expiry Date *",
+                placeholder="Enter your Warranty Expiry Date...") }}
+                {{ render_input_field(field=form.warranty_provider, label="Warranty Provider *", placeholder="Enter your
+                Warranty Provider...") }}
+
+                <!-- Submit Button -->
+                <div class="mt-3 text-center">
+                    <button class="btn btn-primary w-100" type="submit">
+                        <i class="bi bi-file-plus"></i>
+                        <span class="ml-2">Submit</span>
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <!-- Product Details Fields -->
-        {{ render_input_field(field=form.product_name, label="Product Name *", placeholder="Product Name...") }}
-        {{ render_input_field(field=form.warranty_number, label="Warranty Number *", placeholder="Warranty Number...")
-        }}
-        {{ render_input_field(field=form.product_purchase_date, label="Product Purchase Date *", placeholder="Enter your
-        Product Purchase Date...") }}
-        {{ render_input_field(field=form.warranty_expiry_date, label="Warranty Expiry Date *", placeholder="Enter your
-        Warranty Expiry Date...") }}
-        {{ render_input_field(field=form.warranty_provider, label="Warranty Provider *", placeholder="Enter your
-        Warranty Provider...") }}
-
-        <!-- Submit Button -->
-        <div class="mt-3">
-            <button type="submit" class="btn btn-primary">
-                <i class="bi bi-file-plus"></i>
-                <span class="ml-2">Submit</span>
-            </button>
-        </div>
-    </form>
+    </div>
 </div>
 
 <script>
-    // Preview the uploaded product image
-    document.getElementById('image').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('image-preview').src = e.target.result;
-                document.getElementById('image-preview').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+
 
     // Ensure warranty expiry is after purchase date
     document.getElementById('warranty_expiry_date').addEventListener('change', function() {

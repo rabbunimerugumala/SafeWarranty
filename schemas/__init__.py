@@ -1,69 +1,157 @@
-#schemas/__init__.py
+"""
+This file defines form schemas for the application using Flask-WTF and WTForms.
+It includes validation and structure for forms related to user registration, login, warranty card registration,
+editing, and searching.
 
-from wtforms import Form, StringField, validators, DateField, FileField
-from wtforms.validators import DataRequired, InputRequired
-from models import Category, Subcategory  # Import directly from models.py
+Key Features:
+1. **RegisterWarrantyCard**: Form for adding warranty cards with fields for product details and category/subcategory selection.
+2. **EditWarrantyCard**: Form for editing warranty card details.
+3. **SearchWarrantyForm**: Form for searching warranty cards by product name.
+4. **RegisterUserForm**: Form for registering new users with validation for username, email, and password.
+5. **LoginForm**: Form for user login with validation for credentials.
+"""
+
+from flask_wtf.file import FileField  # For file uploads
+# Import necessary libraries for form creation and validation
+from wtforms import Form, StringField, DateField  # Form fields for input
+from wtforms.validators import DataRequired, InputRequired, Length  # Validators for form fields
+
+# Import models to dynamically fetch category and subcategory data
+from models import Category, Subcategory
 
 
-# schema class for Register student
+# Schema for registering a warranty card
 class RegisterWarrantyCard(Form):
-    image = FileField('Product Image')
-    # Category and Subcategory dropdowns
-    category = StringField('Category', [validators.DataRequired()], render_kw={"readonly": True})  # Readonly
-    subcategory = StringField('Subcategory', [validators.DataRequired()], render_kw={"readonly": True})  # Readonly
-    product_name = StringField('first_name', [validators.Length(min=2, max=50), validators.DataRequired()])
-    warranty_number = StringField('last_name', [validators.Length(min=2, max=50), validators.DataRequired()])
-    product_purchase_date = DateField('product_purchase_date', format="%Y-%m-%d")
-    warranty_expiry_date = DateField('warranty_expiry_date', format="%Y-%m-%d")
-    warranty_provider = StringField('warranty_Provider', [validators.Length(min=4, max=50), validators.DataRequired()])
+    """
+    Form for registering a new warranty card.
+    Includes fields for product details, category, subcategory, and optional image upload.
+    """
+    image = FileField('Product Image')  # Optional product image file upload
+    category = StringField(
+        'Category',
+        [DataRequired()],
+        render_kw={"readonly": True}  # Dropdown for category selection, readonly
+    )
+    subcategory = StringField(
+        'Subcategory',
+        [DataRequired()],
+        render_kw={"readonly": True}  # Dropdown for subcategory selection, readonly
+    )
+    product_name = StringField(
+        'Product Name',
+        [Length(min=2, max=50), DataRequired()]  # Product name with validation for length and presence
+    )
+    warranty_number = StringField(
+        'Warranty Number',
+        [Length(min=2, max=50), DataRequired()]  # Unique warranty number with validation
+    )
+    product_purchase_date = DateField(
+        'Purchase Date',
+        format="%Y-%m-%d"  # Date of purchase in YYYY-MM-DD format
+    )
+    warranty_expiry_date = DateField(
+        'Expiry Date',
+        format="%Y-%m-%d"  # Date of warranty expiration in YYYY-MM-DD format
+    )
+    warranty_provider = StringField(
+        'Warranty Provider',
+        [Length(min=4, max=50), DataRequired()]  # Provider of the warranty with validation
+    )
 
     def __init__(self, *args, **kwargs):
+        """
+        Custom initialization to populate category and subcategory dropdowns dynamically.
+        """
         super(RegisterWarrantyCard, self).__init__(*args, **kwargs)
+        # Dynamically fetch categories and subcategories from the database
         self.category.choices = [(cat.id, cat.name) for cat in Category.query.all()]
         self.subcategory.choices = [(sub.id, sub.name) for sub in Subcategory.query.all()]
 
 
-# Schema for edit student
+# Schema for editing warranty card details
 class EditWarrantyCard(Form):
-    image = FileField('Product Image')
-    product_name = StringField('first_name', [validators.Length(min=2, max=50), validators.DataRequired()])
-    warranty_number = StringField('last_name', [validators.Length(min=2, max=50), validators.DataRequired()])
-    product_purchase_date = DateField('product_purchase_date', format="%Y-%m-%d")
-    warranty_expiry_date = DateField('warranty_expiry_date', format="%Y-%m-%d")
-    warranty_provider = StringField('warranty_Provider', [validators.Length(min=4, max=50), validators.DataRequired()])
+    """
+    Form for editing an existing warranty card.
+    Includes fields for updating product details and image.
+    """
+    image = FileField('Product Image')  # Optional product image file upload
+    product_name = StringField(
+        'Product Name',
+        [Length(min=2, max=50), DataRequired()]  # Validation for product name
+    )
+    warranty_number = StringField(
+        'Warranty Number',
+        [Length(min=2, max=50), DataRequired()]  # Validation for unique warranty number
+    )
+    product_purchase_date = DateField(
+        'Purchase Date',
+        format="%Y-%m-%d"  # Date of purchase in YYYY-MM-DD format
+    )
+    warranty_expiry_date = DateField(
+        'Expiry Date',
+        format="%Y-%m-%d"  # Date of warranty expiration in YYYY-MM-DD format
+    )
+    warranty_provider = StringField(
+        'Warranty Provider',
+        [Length(min=4, max=50), DataRequired()]  # Validation for provider name
+    )
 
 
-# schema for search student
+# Schema for searching warranty cards
 class SearchWarrantyForm(Form):
-    warranty_product_name = StringField("warranty_product_name",
-                                        [validators.Length(min=2, max=50), validators.DataRequired()])
-
+    """
+    Form for searching warranty cards by product name.
+    """
+    warranty_product_name = StringField(
+        "Warranty Product Name",
+        [Length(min=2, max=50), DataRequired()]  # Validation for search input
+    )
 
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
+
+# Schema for registering new users
 class RegisterUserForm(FlaskForm):
     """
-    Form to handle user registration with validation for username, email, and password.
+    Form for registering a new user.
+    Includes fields for username, email, and password with validation.
     """
-    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=20)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    username = StringField(
+        'Username',
+        validators=[DataRequired(), Length(min=4, max=20)]  # Username validation for presence and length
+    )
+    email = StringField(
+        'Email',
+        validators=[DataRequired(), Email()]  # Validation for email format
+    )
+    password = PasswordField(
+        'Password',
+        validators=[DataRequired(), Length(min=8)]  # Password validation for presence and minimum length
+    )
+    confirm_password = PasswordField(
+        'Confirm Password',
+        validators=[DataRequired(), EqualTo('password')]  # Validation to match the password field
+    )
 
-    submit = SubmitField('Register')
+    submit = SubmitField('Register')  # Submit button for the form
 
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
 
+# Schema for user login
 class LoginForm(FlaskForm):
     """
-    Form to handle user login with validation for username/email and password.
+    Form for logging in an existing user.
+    Includes fields for username or email and password.
     """
-    username = StringField('Username or Email', validators=[InputRequired()])
-    password = PasswordField('Password', validators=[InputRequired()])
+    username = StringField(
+        'Username or Email',
+        validators=[InputRequired()]  # Validation for presence
+    )
+    password = PasswordField(
+        'Password',
+        validators=[InputRequired()]  # Validation for presence
+    )
 
-    submit = SubmitField('Login')
-
+    submit = SubmitField('Login')  # Submit button for the form

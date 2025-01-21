@@ -148,54 +148,59 @@
     <!-- Navigation items -->
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a href="{{ url_for('warranty_mgmt.index') }}" class="nav-link">
+            <a class="nav-link" href="{{ url_for('warranty_mgmt.index') }}">
                 <i class="bi bi-house fs-4 {% if '/index' in request.path %}active text-primary{% else %}text-light{% endif %}"></i>
                 <span>Dashboard</span>
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ url_for('warranty_mgmt.categories_page') }}" class="nav-link">
+            <a class="nav-link" href="{{ url_for('warranty_mgmt.categories_page') }}">
                 <i class="bi bi-file-earmark-plus fs-4 {% if '/add_warranty' in request.path %}active text-primary{% else %}text-light{% endif %}"></i>
                 <span>Add Warranty</span>
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ url_for('warranty_mgmt.get_warranties') }}" class="nav-link">
+            <a class="nav-link" href="{{ url_for('warranty_mgmt.get_warranties') }}">
                 <i class="bi bi-view-stacked fs-4 {% if '/get_warranties' in request.path %}active text-primary{% else %}text-light{% endif %}"></i>
                 <span>My Warranties</span>
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ url_for('warranty_mgmt.search_warranties') }}" class="nav-link">
+            <a class="nav-link" href="{{ url_for('warranty_mgmt.search_warranties') }}">
                 <i class="bi bi-search fs-4 {% if '/search_warranties' in request.path %}active text-primary{% else %}text-light{% endif %}"></i>
                 <span>Warranties</span>
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a class="nav-link" href="#">
                 <i class="bi bi-bell fs-4"></i>
                 <span>Reminders</span>
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a class="nav-link" href="#">
                 <i class="bi bi-gear fs-4"></i>
                 <span>Settings</span>
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a class="nav-link" href="#">
                 <i class="bi bi-person fs-4"></i>
                 <span>Profile</span>
             </a>
         </li>
         {% if current_user.is_authenticated %}
         <li class="nav-item">
-            <a href="{{ url_for('auth.logout') }}" class="nav-link">
+            <a class="nav-link" href="{{ url_for('auth.logout') }}" onclick="return confirmLogout();">
                 <i class="bi bi-box-arrow-right fs-4"></i>
                 <span>Logout</span>
             </a>
         </li>
+        <script>
+            function confirmLogout() {
+                return confirm("Are you sure you want to logout?");
+            }
+        </script>
         {% endif %}
     </ul>
 </div>

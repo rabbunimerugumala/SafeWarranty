@@ -1,0 +1,36 @@
+# Python bytecode files
+*.pyc
+*.pyo
+__pycache__
+
+# Virtual environment folder
+venv/
+env/
+.venv/
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Distribution and packaging
+*.egg
+*.egg-info
+dist/
+build/
+
+# Database files (if any)
+*.db
+*.sqlite
+
+
+# Flask cache
+instance/
+*.sqlite3
+
+# Flask-specific configurations
+config.py
+
+# Flask sessions
+*.log
+
+

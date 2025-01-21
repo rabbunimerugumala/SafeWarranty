@@ -6,8 +6,12 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 40px;
+        padding: 20px;
         min-height: 100vh;
+        margin: 0 auto;
+        margin-left: 70px;
+        margin-bottom: 70px;
+
     }
 
     /* Main card styling */
@@ -20,21 +24,56 @@
         overflow: hidden;
     }
 
-    /* Image styling */
-    .warranty-image {
+    /* Image editing container */
+    .image-edit-container {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        margin: 20px auto;
+    }
+
+    .image-edit-label {
         display: block;
         width: 100%;
-        max-height: 300px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+    }
+
+    .image-edit-label img {
+        width: 100%;
+        height: auto;
         object-fit: cover;
-        border-bottom: 1px solid #f0f0f0;
+        border-radius: 10px;
+    }
+
+    .image-edit-label .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        font-size: 24px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .image-edit-label:hover .overlay {
+        opacity: 1;
     }
 
     /* Card content container */
     .card-content {
-        padding: 10px;
+        padding: 20px;
     }
 
-    /* Sub-section styling */
+    /* Info section styling */
     .info-section {
         display: flex;
         flex-wrap: wrap;
@@ -42,9 +81,8 @@
         margin-top: 20px;
     }
 
-    /* Individual detail card */
     .info-card {
-        flex: 1 1 calc(50% - 20px); /* Responsive cards */
+        flex: 1 1 100%; /* Full width on small screens */
         padding: 15px;
         background: #f9f9f9;
         border-radius: 10px;
@@ -52,29 +90,7 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .info-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Info card title */
-    .info-card h6 {
-        margin: 0 0 10px;
-        font-size: 1rem;
-        font-weight: bold;
-        color: #007bff;
-    }
-
-    /* Info card text */
-    .info-card p,
-    .info-card input,
-    .info-card select {
-        font-size: 0.9rem;
-        color: #333;
-        width: 100%;
-    }
-
-    /* Button styling */
+        /* Back button */
     .btn-back {
         display: inline-flex;
         align-items: center;
@@ -97,62 +113,76 @@
         margin-right: 5px;
     }
 
+    @media (min-width: 768px) {
+        .info-card {
+            flex: 1 1 calc(50% - 20px); /* Two columns on medium screens */
+        }
+        .btn-back {
+            width: 100%; /* Make the back button full width */
+            text-align: center;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .info-card {
+            flex: 1 1 calc(50% - 20px); /* Two columns on larger screens */
+        }
+
+
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Info card titles */
+    .info-card h6 {
+        margin: 0 0 10px;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    /* Inputs and text */
+    .info-card input,
+    .info-card select {
+        font-size: 0.9rem;
+        color: #333;
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+
+
+    /* Submit button */
     .submit-button {
         margin-top: 20px;
         display: flex;
         justify-content: center;
     }
 
-    .image-edit-container {
-    position: relative;
-    width: 750px; /* Adjust the width */
-    height: 350px; /* Adjust the height */
-    margin: 20px auto;
-}
+    .submit-button button {
+        padding: 10px 20px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
 
-.image-edit-label {
-    display: block;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-    position: relative;
-<!--    border-radius: 50%; /* Optional for circular images */-->
-    overflow: hidden;
-}
-
-.image-edit-label img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-<!--    border-radius: 50%; /* Matches the container */-->
-}
-
-.image-edit-label .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    font-size: 24px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.image-edit-label:hover .overlay {
-    opacity: 1;
-}
-
+    .submit-button button:hover {
+        background-color: #0056b3;
+    }
 </style>
 
 <div class="main-container">
     <div class="main-card">
         <!-- Back Button -->
-        <a href="{{ url_for('warranty_mgmt.get_warranties') }}" class="btn-back">
+        <a class="btn-back" href="{{ url_for('warranty_mgmt.get_warranties') }}">
             <i class="bi bi-chevron-left"></i> Back
         </a>
 
@@ -160,110 +190,89 @@
         <div class="card-content">
             <h3 class="text-center mb-4">Edit Warranty</h3>
 
-<!--            &lt;!&ndash; Warranty Image &ndash;&gt;-->
-<!--            {% if warranty.image %}-->
-<!--            <img src="{{ url_for('static', filename=warranty.image) }}" alt="Warranty Image" class="warranty-image">-->
-<!--            {% else %}-->
-<!--            <div style="text-align: center; font-size: 50px;" class="justify-content-center">-->
-<!--                <i class="bi bi-image"></i>-->
-<!--            </div>-->
-<!--            <p class="text-center">No Image Available</p>-->
-<!--            {% endif %}-->
-
-
-
             <!-- Edit Warranty Form -->
-            <form method="POST" enctype="multipart/form-data">
-                <div class="image-edit-container info-card">
-                        <!-- Display the current image -->
-                        <label for="image-upload" class="image-edit-label">
-                            <img id="current-image"
-                                 src="{{ url_for('static', filename=warranty.image) }}"
-                                 alt="Current Image">
-                            <div class="overlay">
-                                <i class="bi bi-plus-circle"></i>
-                            </div>
-                        </label>
+            <form enctype="multipart/form-data" method="POST">
+                <div class="image-edit-container">
+                    <!-- Display the current image -->
+                    <label class="image-edit-label" for="image-upload">
+                        <img alt="Current Image"
+                             id="current-image"
+                             src="{{ url_for('static', filename=warranty.image) }}">
+                        <div class="overlay">
+                            <i class="bi bi-plus-circle"></i>
+                        </div>
+                    </label>
 
-                        <!-- Hidden file input -->
-                        <input type="file" id="image-upload" name="image" accept="image/*"
-                               onchange="previewImage(event)" style="display: none;">
-                    </div>
+                    <!-- Hidden file input -->
+                    <input accept="image/*" id="image-upload" name="image" onchange="previewImage(event)"
+                           style="display: none;" type="file">
+                </div>
+
                 <div class="info-section">
                     <!-- Product Name -->
                     <div class="info-card">
                         <h6>Product Name</h6>
-                        <input type="text" name="product_name"
-                               value="{{ form.product_name.data or warranty.product_name }}" class="form-control"
-                               required>
+                        <input name="product_name" required
+                               type="text" value="{{ form.product_name.data or warranty.product_name }}">
                     </div>
 
                     <!-- Warranty Number -->
                     <div class="info-card">
                         <h6>Warranty Number</h6>
-                        <input type="text" name="warranty_number"
-                               value="{{ form.warranty_number.data or warranty.warranty_number }}" class="form-control"
-                               required>
+                        <input name="warranty_number" required
+                               type="text" value="{{ form.warranty_number.data or warranty.warranty_number }}">
                     </div>
 
                     <!-- Product Purchase Date -->
                     <div class="info-card">
                         <h6>Product Purchase Date</h6>
-                        <input type="date" name="product_purchase_date"
-                               value="{{ form.product_purchase_date.data or warranty.product_purchase_date }}"
-                               class="form-control" required>
+                        <input name="product_purchase_date" required
+                               type="date"
+                               value="{{ form.product_purchase_date.data or warranty.product_purchase_date }}">
                     </div>
 
                     <!-- Warranty Expiry Date -->
                     <div class="info-card">
                         <h6>Warranty Expiry Date</h6>
-                        <input type="date" name="warranty_expiry_date"
-                               value="{{ form.warranty_expiry_date.data or warranty.warranty_expiry_date }}"
-                               class="form-control" required>
+                        <input name="warranty_expiry_date" required
+                               type="date"
+                               value="{{ form.warranty_expiry_date.data or warranty.warranty_expiry_date }}">
                     </div>
 
                     <!-- Warranty Provider -->
                     <div class="info-card">
                         <h6>Warranty Provider</h6>
-                        <input type="text" name="warranty_provider"
-                               value="{{ form.warranty_provider.data or warranty.warranty_provider }}"
-                               class="form-control" required>
+                        <input name="warranty_provider" required
+                               type="text" value="{{ form.warranty_provider.data or warranty.warranty_provider }}">
                     </div>
+                </div>
 
-                    <!--                    &lt;!&ndash; Warranty Image Upload &ndash;&gt;-->
-                    <!--                    <div class="info-card">-->
-                    <!--                        <h6>Upload New Image</h6>-->
-                    <!--                        <input type="file" name="image" class="form-control">-->
-                    <!--                    </div>-->
-                    <!--                </div>-->
-
-                    <!-- Submit Button -->
-                    <div class="submit-button">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-check-circle"></i> Save Changes
-                        </button>
-                    </div>
+                <!-- Submit Button -->
+                <div class="submit-button">
+                    <button type="submit">
+                        <i class="bi bi-check-circle"></i> Save Changes
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 </div>
 
 <script>
+    function previewImage(event) {
+        const fileInput = event.target;
+        const imagePreview = document.getElementById('current-image');
 
-function previewImage(event) {
-const fileInput=event.target;
-const imagePreview=document.getElementById('current-image');
-
-// Check if a file was selected
-if (fileInput.files && fileInput.files[0]) {
-const reader = new FileReader();
-reader.onload = function (e) {
-// Update the image src to show the selected file
-imagePreview.src = e.target.result;
-};
-reader.readAsDataURL(fileInput.files[0]);
-}
-}
+        // Check if a file was selected
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                // Update the image src to show the selected file
+                imagePreview.src = e.target.result;
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+    }
 </script>
 
 {% endblock %}
