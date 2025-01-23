@@ -37,6 +37,7 @@ class Category(db.Model):
     subcategories = db.relationship('Subcategory', backref='category',
                                     lazy=True)  # One-to-many relationship with Subcategory
 
+
     def __repr__(self):
         return f"<Category {self.name}>"  # String representation for debugging
 

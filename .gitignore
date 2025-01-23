@@ -32,5 +32,3 @@ config.py
 
 # Flask sessions
 *.log
-
-
