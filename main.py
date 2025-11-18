@@ -15,6 +15,7 @@ Key Features:
 
 Usage:
 Run this file to start the application:
+    .\venv\Scripts\activate
     python main.py
 
 This file demonstrates:
